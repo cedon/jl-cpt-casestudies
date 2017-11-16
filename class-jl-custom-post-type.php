@@ -20,9 +20,9 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 		public function __construct( $name, $args = array(), $labels = array() ) {
 
 			// Set Variables
-			$this->$post_type_name      = strtolower( str_replace( ' ','_', $name) );
-			$this->$post_type_args      = $args;
-			$this->$post_type_lables    = $labels;
+			$this->post_type_name      = strtolower( str_replace( ' ','_', $name) );
+			$this->post_type_args      = $args;
+			$this->post_type_lables    = $labels;
 
 			// Add Action to Register Custom Post Type if it Does Not Already Exist
 			if( ! post_type_exists( $this->post_type_name) ) {
@@ -143,7 +143,7 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 
 					// Create Taxonomy and Add it to the Post Type
 					add_action( 'init',
-						function() use( $taxonomy_name, $post_type_name ) {
+						function() use( $taxonomy_name, $post_type_name, $args ) {
 							register_taxonomy( $taxonomy_name, $post_type_name, $args );
 						}
 					);
