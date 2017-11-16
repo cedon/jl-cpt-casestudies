@@ -47,7 +47,7 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 				array(
 					'name'               => _x( $plural, 'Post Type General Name', 'jlfitcase' ),
 					'singular_name'      => _x( $name, 'Post Type Singular Name', 'jlfitcase' ),
-					'add_new'            => _x( 'Add New ' . strtolower( $name ), 'jlfitcase' ),
+					'add_new'            => _x( 'Add New ', strtolower( $name ), 'jlfitcase' ),
 					'add_new_item'       => __( 'Add New ' . $name, 'jlfitcase' ),
 					'edit_item'          => __( 'Edit ' . $name, 'jlfitcase' ),
 					'new_item'           => __( 'New ' . $name, 'jlfitcase' ),
@@ -113,7 +113,7 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 						array(
 							'name'               => _x( $plural, 'Post Type General Name', 'jlfitcase' ),
 							'singular_name'      => _x( $name, 'Post Type Singular Name', 'jlfitcase' ),
-							'search_items'       => __( 'Search', $plural, 'jlfitcase' ),
+							'search_items'       => __( 'Search ' . $plural, 'jlfitcase' ),
 							'parent_item'        => __( 'Parent ' . $name, 'jlfitcase' ),
 							'parent_item_colon'  => __( 'Parent ' . $name . ':', 'jlfitcase' ),
 							'edit_item'          => __( 'Edit ' . $name, 'jlfitcase' ),
@@ -174,6 +174,16 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 		public function save() {
 
 
+		}
+
+		/** Beautify Helper Function */
+		public static function beautify( $string ) {
+			return ucwords( str_replace( '_', ' ', $string ) );
+		}
+
+		/** Uglify Helper Function */
+		public static function uglify( $string ) {
+			return strtolower( str_replace( ' ', '_', $string ) );
 		}
 
 		/** Pluralize Helper Function */
