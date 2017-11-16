@@ -36,6 +36,51 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 		/** Register post type method */
 		public function register_post_type() {
 
+			// Capitalize words and make them plural
+			$name   = ucwords( str_replace( '_', ' ', $this->post_type_name ) );
+			$plural = self::pluralize( $name );
+
+			// Set labels with some defaults and merge in overrides
+			$labels = array_merge(
+
+				// Default values
+				array(
+					'name'               => _x( $plural, 'Post Type General Name', 'jlfitcase' ),
+					'singular_name'      => _x( $name, 'Post Type Singular Name', 'jlfitcase' ),
+					'add_new'            => _x( 'Add New', strtolower( $name ) ),
+					'add_new_item'       => __( 'Add News' . $name ),
+					'edit_item'          => __( 'Edit' . $name ),
+					'new_item'           => __( 'New' . $name ),
+					'all_items'          => __( 'All' . $plural ),
+					'view_item'          => __( 'View' . $name ),
+					'search_items'       => __( 'Search', $plural ),
+					'not_found'          => __( 'No ' . strtolower( $plural ) . ' found' ),
+					'not_found_in_trash' => __( 'No ' . strtolower( $plural ) . ' found in Trash' ),
+					'parent_item_colon'  => '',
+					'menu_name'          => $plural
+				),
+
+				// Overrides
+				$this->post_type_labels
+			);
+
+			// Set default arguments and merge in overrides
+			$args = array_merge(
+
+				// Default Values
+				array(
+					'label' => $plural,
+					'labels' => $labels,
+					'public' => true,
+					'show_ui' => true,
+					'supports' => array( 'title', 'editor' ),
+					'show_in_nav_menus' => true,
+					'_builtin' => false,
+				),
+
+				// Overrides
+				$this->post_type_args
+			);
 
 		}
 
