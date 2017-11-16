@@ -19,6 +19,18 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 		/** Constructor */
 		public function __construct( $name, $args = array(), $labels = array() ) {
 
+			// Set Variables
+			$this->$post_type_name      = strtolower( str_replace( ' ','_', $name) );
+			$this->$post_type_args      = $args;
+			$this->$post_type_lables    = $labels;
+
+			// Add Action to Register Custom Post Type if it Does Not Already Exist
+			if( ! post_type_exists( $this->post_type_name) ) {
+				add_action( 'init', array( &$this, 'register_post_type' ) );
+			}
+
+			// Listen for Save Post Hook
+			$this->save();
 		}
 
 		/** Register post type method */
