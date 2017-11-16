@@ -37,7 +37,7 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 		public function register_post_type() {
 
 			// Capitalize words and make them plural
-			$name   = ucwords( str_replace( '_', ' ', $this->post_type_name ) );
+			$name   = self::beautify( $this->post_type_name );
 			$plural = self::pluralize( $name );
 
 			// Set labels with some defaults and merge in overrides
@@ -96,14 +96,14 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 				$post_type_name = $this->post_type_name;
 
 				// Taxonomy Properties
-				$taxonomy_name   = strtolower( str_replace( ' ', '_', $name ) );
+				$taxonomy_name   = self::uglify( $name );
 				$taxonomy_labels = $labels;
 				$taxonomy_args   = $args;
 
 				if( ! taxonomy_exists( $taxonomy_name ) ) {
 
 					// Capitalize words and make them plural
-					$name   = ucwords( str_replace( '_', ' ', $name ) );
+					$name   = self::beautify( $name );
 					$plural = self::pluralize( $name );
 
 					// Set labels with some defaults and merge in overrides
