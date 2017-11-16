@@ -48,7 +48,7 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 					'name'               => _x( $plural, 'Post Type General Name', 'jlfitcase' ),
 					'singular_name'      => _x( $name, 'Post Type Singular Name', 'jlfitcase' ),
 					'add_new'            => _x( 'Add New', strtolower( $name ), 'jlfitcase' ),
-					'add_new_item'       => __( 'Add News' . $name, 'jlfitcase' ),
+					'add_new_item'       => __( 'Add New' . $name, 'jlfitcase' ),
 					'edit_item'          => __( 'Edit' . $name, 'jlfitcase' ),
 					'new_item'           => __( 'New' . $name, 'jlfitcase' ),
 					'all_items'          => __( 'All' . $plural, 'jlfitcase' ),
@@ -86,6 +86,79 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 
 		/** Register taxonomy method */
 		public function add_taxonomy( $name, $args = array(), $labels = array() ) {
+
+			if( ! empty( $name ) ) {
+
+				// Get Post Name
+				$post_type_name = $this->post_type_name;
+
+				// Taxonomy Properties
+				$taxonomy_name   = strtolower( str_replace( ' ', '_', $name ) );
+				$taxonomy_labels = $labels;
+				$taxonomy_args   = $args;
+
+				if( ! taxonomy_exists( $taxonomy_name ) ) {
+
+					// Capitalize words and make them plural
+					$name   = ucwords( str_replace( '_', ' ', $this->post_type_name ) );
+					$plural = self::pluralize( $name );
+
+					// Set labels with some defaults and merge in overrides
+					$labels = array_merge(
+
+						// Defaults
+						array(
+							'name'               => _x( $plural, 'Post Type General Name', 'jlfitcase' ),
+							'singular_name'      => _x( $name, 'Post Type Singular Name', 'jlfitcase' ),
+							'search_items'       => __( 'Search', $plural, 'jlfitcase' ),
+							'parent_item'        => __( 'Parent ' . $name, 'jlfitcase' ),
+							'parent_item_colon'  => __( 'Parent ' . $name . ':', 'jlfitcase' ),
+							'edit_item'          => __( 'Edit' . $name, 'jlfitcase' ),
+							'update_item'        => __( 'Update' . $name, 'jlfitcase' ),
+							'add_new_item'       => __( 'Add New' . $name, 'jlfitcase' ),
+							'new_item_name'      => __( 'New' . $name . ' Name', 'jlfitcase' ),
+							'menu_name'          => __( $name ),
+						),
+
+						// Overrides
+						$taxonomy_labels
+					);
+
+					// Set default arguments and merge in overrides
+					$args = array_merge(
+
+					// Default Values
+						array(
+							'label'             => $plural,
+							'labels'            => $labels,
+							'public'            => true,
+							'show_ui'           => true,
+							'show_in_nav_menus' => true,
+							'_builtin'          => false,
+						),
+
+						// Overrides
+						$taxonomy_args
+					);
+
+					// Create Taxonomy and Add it to the Post Type
+					add_action( 'init',
+						function() use( $taxonomy_name, $post_type_name ) {
+							register_taxonomy( $taxonomy_name, $post_type_name, $args );
+						}
+					);
+
+				} else {
+
+					// Add Already-Existing Taxonomy to Post Type
+					add_action( 'init',
+						function() use( $taxonomy_name, $post_type_name ) {
+							register_taxonomy_for_object_type( $taxonomy_name, $post_type_name );
+						}
+					);
+				}
+			}
+
 
 		}
 
