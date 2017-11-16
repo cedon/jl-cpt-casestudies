@@ -47,15 +47,15 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 				array(
 					'name'               => _x( $plural, 'Post Type General Name', 'jlfitcase' ),
 					'singular_name'      => _x( $name, 'Post Type Singular Name', 'jlfitcase' ),
-					'add_new'            => _x( 'Add New', strtolower( $name ) ),
-					'add_new_item'       => __( 'Add News' . $name ),
-					'edit_item'          => __( 'Edit' . $name ),
-					'new_item'           => __( 'New' . $name ),
-					'all_items'          => __( 'All' . $plural ),
-					'view_item'          => __( 'View' . $name ),
-					'search_items'       => __( 'Search', $plural ),
-					'not_found'          => __( 'No ' . strtolower( $plural ) . ' found' ),
-					'not_found_in_trash' => __( 'No ' . strtolower( $plural ) . ' found in Trash' ),
+					'add_new'            => _x( 'Add New', strtolower( $name ), 'jlfitcase' ),
+					'add_new_item'       => __( 'Add News' . $name, 'jlfitcase' ),
+					'edit_item'          => __( 'Edit' . $name, 'jlfitcase' ),
+					'new_item'           => __( 'New' . $name, 'jlfitcase' ),
+					'all_items'          => __( 'All' . $plural, 'jlfitcase' ),
+					'view_item'          => __( 'View' . $name, 'jlfitcase' ),
+					'search_items'       => __( 'Search', $plural, 'jlfitcase' ),
+					'not_found'          => __( 'No ' . strtolower( $plural ) . ' found', 'jlfitcase' ),
+					'not_found_in_trash' => __( 'No ' . strtolower( $plural ) . ' found in Trash', 'jlfitcase' ),
 					'parent_item_colon'  => '',
 					'menu_name'          => $plural
 				),
@@ -69,13 +69,13 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 
 				// Default Values
 				array(
-					'label' => $plural,
-					'labels' => $labels,
-					'public' => true,
-					'show_ui' => true,
-					'supports' => array( 'title', 'editor' ),
+					'label'             => $plural,
+					'labels'            => $labels,
+					'public'            => true,
+					'show_ui'           => true,
+					'supports'          => array( 'title', 'editor' ),
 					'show_in_nav_menus' => true,
-					'_builtin' => false,
+					'_builtin'          => false,
 				),
 
 				// Overrides
