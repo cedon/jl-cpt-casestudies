@@ -82,6 +82,9 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 				$this->post_type_args
 			);
 
+			// Create the Custom Post Type
+			register_post_type( $this->post_type_name, $args );
+
 		}
 
 		/** Register taxonomy method */
@@ -100,7 +103,7 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 				if( ! taxonomy_exists( $taxonomy_name ) ) {
 
 					// Capitalize words and make them plural
-					$name   = ucwords( str_replace( '_', ' ', $this->post_type_name ) );
+					$name   = ucwords( str_replace( '_', ' ', $name ) );
 					$plural = self::pluralize( $name );
 
 					// Set labels with some defaults and merge in overrides
