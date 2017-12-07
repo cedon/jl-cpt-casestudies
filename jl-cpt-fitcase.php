@@ -16,3 +16,22 @@ define( 'JLFITCASE__PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_FILE', __FILE__ );
 
 require_once( JLFITCASE__PLUGIN_DIR . 'class-jl-custom-post-type.php' );
+
+$book = new JL_CustomPostType( 'Book' );
+$book->add_taxonomy( 'Author' );
+
+$book->add_meta_box(
+	'Book Info',
+	array(
+		'Year' => 'text',
+		'Genre' => 'text'
+	)
+);
+
+$book->add_meta_box(
+	'Author Info',
+	array(
+		'Name'        => 'text',
+		'Nationality' => 'text',
+	)
+);

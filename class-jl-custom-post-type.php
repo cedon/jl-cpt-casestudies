@@ -6,12 +6,12 @@
  * @since 1.0.0
  */
 
-if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
+if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 	/**
-	 * Class JL_Custom_Post_Type
+	 * Class JL_CustomPostType
 	 */
-	class JL_Custom_Post_Type {
+	class JLCustomPostType {
 		public $post_type_name;
 		public $post_type_args;
 		public $post_type_labels;
@@ -20,7 +20,7 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 		public function __construct( $name, $args = array(), $labels = array() ) {
 
 			// Set Variables
-			$this->post_type_name      = strtolower( str_replace( ' ','_', $name) );
+			$this->post_type_name      = self::uglify( $name );
 			$this->post_type_args      = $args;
 			$this->post_type_lables    = $labels;
 
@@ -168,6 +168,53 @@ if ( ! class_exists( 'JL_Custom_Post_Type' ) ) {
 		/** Attaches meta boxes to the post type */
 		public function add_meta_box( $title, $fields = array(), $context = 'normal', $priority = 'default' ) {
 
+			if ( ! empty( $title ) ) {
+
+				// Get Post Type Name
+				$post_type_name = $this->post_type_name;
+
+				// Metabox Variables
+				$box_id       = self::uglify( $title );
+				$box_title    = self::beautify( $title );
+				$box_context  = $context;
+				$box_priority = $priority;
+
+				// Make fields global
+				global $custom_fields;
+				$custom_fields[$title] = $fields;
+
+				add_action( 'add_meta_boxes',
+					function() use( $box_id, $box_title, $post_type_name, $box_context, $box_priority, $fields ) {
+						add_meta_box(
+							$box_id,
+							$box_title,
+							function( $post, $data ) {
+								global $post;
+
+								// Nonce Field for Validation
+								wp_nonce_field( JLFITCASE__PLUGIN_FILE, 'custom_post_type' );
+
+								// Get Inputs from $data
+								$custom_fields = $data['args'][0];
+
+								error_log( gettype());
+
+								// Get Saved Values
+								$meta = get_post_custom( $post->ID );
+
+								// Check Array and Loop
+								if ( ! empty( $custom_fields ) ) {
+									foreach ( $custom_fields as $label => $type ) {
+										$field_id_name = self::uglify( $data['id'] ) . '_' . self::uglify( $label );
+
+										echo '<label for="' . $field_id_name . '">' . $label . '</label><input type="text" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[$field_id_name][0] . '" />';
+									}
+								}
+							}
+						);
+					}
+				);
+			}
 		}
 
 		/** Listener for saving post */
