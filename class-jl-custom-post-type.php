@@ -208,7 +208,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 										echo '<label for="' . $field_id_name . '">' . $label . '</label><input type="text" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[$field_id_name][0] . '" />';
 									}
 								}
-							}
+							},
+							$post_type_name,
+							$box_context,
+							$box_priority,
+							array( $fields )
 						);
 					}
 				);
