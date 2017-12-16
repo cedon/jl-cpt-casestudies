@@ -11,7 +11,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 	/**
 	 * Class JL_CustomPostType
 	 */
-	class JLCustomPostType {
+	class JL_CustomPostType {
 		public $post_type_name;
 		public $post_type_args;
 		public $post_type_labels;
@@ -22,7 +22,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			// Set Variables
 			$this->post_type_name      = self::uglify( $name );
 			$this->post_type_args      = $args;
-			$this->post_type_lables    = $labels;
+			$this->post_type_labels    = $labels;
 
 			// Add Action to Register Custom Post Type if it Does Not Already Exist
 			if( ! post_type_exists( $this->post_type_name) ) {
@@ -196,8 +196,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 								// Get Inputs from $data
 								$custom_fields = $data['args'][0];
-
-								error_log( gettype());
 
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
