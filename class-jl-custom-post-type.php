@@ -9,14 +9,50 @@
 if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 	/**
-	 * Class JL_CustomPostType
+	 * The JL Custom Post Type Generator Class
+	 *
+	 * @since 1.0
 	 */
 	class JL_CustomPostType {
+
+		/**
+		 *
+		 * Name of Custom Post Type set by the user
+		 *
+		 * @since 1.0
+		 * @access public
+		 * @var string
+		 */
 		public $post_type_name;
+
+		/**
+		 * Arguments for custom post type registration
+		 *
+		 * @since 1.0
+		 * @access public
+		 * @var array
+		 */
 		public $post_type_args;
+
+		/**
+		 * Labels for custom post type
+		 *
+		 * @since 1.0
+		 * @access public
+		 * @var array
+		 */
 		public $post_type_labels;
 
-		/** Constructor */
+		/**
+		 * Constructor
+		 *
+		 * @since 1.0
+		 * @access public
+		 *
+		 * @param string $name Name of the custom post type
+		 * @param array $args (optional) Array of argument overrides
+		 * @param array $labels (optional) Array of label overrides
+		 */
 		public function __construct( $name, $args = array(), $labels = array() ) {
 
 			// Set Variables
@@ -33,7 +69,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			$this->save();
 		}
 
-		/** Register post type method */
+		/**
+		 * Register post type method
+		 *
+		 * @since 1.0
+		 * @access public
+		 */
 		public function register_post_type() {
 
 			// Capitalize words and make them plural
@@ -87,7 +128,16 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 		}
 
-		/** Register taxonomy method */
+		/**
+		 * Register taxonomy method
+		 *
+		 * @since 1.0
+		 * @access public
+		 *
+		 * @param string $name Name of the custom taxonomy
+		 * @param array $args (optional) Array of argument overrides for taxonomy creation
+		 * @param array $labels (optional) Array of label overrides for taxonomy
+		 */
 		public function add_taxonomy( $name, $args = array(), $labels = array() ) {
 
 			if( ! empty( $name ) ) {
@@ -165,7 +215,17 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 		}
 
-		/** Attaches meta boxes to the post type */
+		/**
+		 * Attaches meta boxes to the post type
+		 *
+		 * @since 1.0
+		 * @access public
+		 *
+		 * @param string $title Title of meta box
+		 * @param array $fields (optional) Array of fields to add to meta box
+		 * @param string $context (optional) Context on the screen where the meta box should display
+		 * @param string $priority (optional) The priority within the context where the meta box should display
+		 */
 		public function add_meta_box( $title, $fields = array(), $context = 'normal', $priority = 'default' ) {
 
 			if ( ! empty( $title ) ) {
@@ -256,17 +316,44 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 		}
 
-		/** Beautify Helper Function */
+		/**
+		 * Changes a string like 'my_string' to 'My String' for display purposes
+		 *
+		 * @since 1.0
+		 * @access public
+		 *
+		 * @param string $string The string of text to beautify
+		 *
+		 * @return string The beautified text string
+		 */
 		public static function beautify( $string ) {
 			return ucwords( str_replace( '_', ' ', $string ) );
 		}
 
-		/** Uglify Helper Function */
+		/**
+		 * Changes a string like 'My String' to 'my_string' for display purposes
+		 *
+		 * @since 1.0
+		 * @access public
+		 *
+		 * @param string $string The string of text to uglify
+		 *
+		 * @return string The uglified text string
+		 */
 		public static function uglify( $string ) {
 			return strtolower( str_replace( ' ', '_', $string ) );
 		}
 
-		/** Pluralize Helper Function */
+		/**
+		 * Converts a provided word into its plural form
+		 *
+		 * @since 1.0
+		 * @access public
+		 *
+		 * @param string $string The word to be pluralized
+		 *
+		 * @return string The pluralized form of $string
+		 */
 		public static function pluralize( $string ) {
 			$exceptions = array(
 				'Amoyese',
