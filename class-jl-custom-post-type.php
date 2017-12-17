@@ -221,7 +221,38 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 		/** Listener for saving post */
 		public function save() {
+			$post_type_name = $this->post_type_name;
 
+			add_action( 'save_post',
+				function () use ( $post_type_name ) {
+
+					// Do not autosave meta box data
+					if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+						return;
+					}
+
+					// Abort if the nonce field is not set
+					if ( ! wp_verify_nonce( $_POST['custom_post_type'], JLFITCASE__PLUGIN_FILE ) ) {
+						return;
+					}
+
+					global $post;
+
+					if ( isset( $_POST ) && isset( $post->ID ) && get_post_type( $post->ID ) == $post_type_name ) {
+						global $custom_fields;
+
+						// Loop through all meta boxes
+						foreach ( $custom_fields as $title => $fields ) {
+
+							// Loop through all fields in meta box
+							foreach ( $fields as $label => $type ) {
+								$field_name = self::uglify( $title ) . '_' . self::uglify( $label );
+								update_post_meta( $post->ID, $field_name, $_POST['custom_meta'][ $field_name ] );
+							}
+						}
+					}
+				}
+			);
 
 		}
 
