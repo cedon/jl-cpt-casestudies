@@ -17,21 +17,27 @@ define( 'JLFITCASE__PLUGIN_FILE', __FILE__ );
 
 require_once( JLFITCASE__PLUGIN_DIR . 'class-jl-custom-post-type.php' );
 
-$book = new JL_CustomPostType( 'Book' );
-$book->add_taxonomy( 'Author' );
+$fitcase = new JL_CustomPostType( 'Case Study' );
+$fitcase->add_taxonomy( 'Type' );
 
-$book->add_meta_box(
-	'Book Info',
+$fitcase->add_meta_box(
+	'Client Info',
 	array(
-		'Year' => 'text',
-		'Genre' => 'text'
+		'Client First Name' => 'text',
+		'Client Last Name'  => 'text',
+		'Client Age'        => 'number',
 	)
 );
 
-$book->add_meta_box(
-	'Author Info',
-	array(
-		'Name'        => 'text',
-		'Nationality' => 'text',
-	)
-);
+// Add Class to Post Meta Boxes
+
+
+// Load Custom Admin Styles
+function jl_fitcase_css() {
+	global $post_type;
+	if ( 'case_study' != $post_type ) {
+		return;
+	}
+	wp_enqueue_style( 'jlfitcase-admin-style', plugins_url( '_css/jl-fitcase-admin.css', __FILE__ ) );
+}
+add_action( 'admin_enqueue_scripts', 'jl_fitcase_css' );

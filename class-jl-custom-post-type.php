@@ -234,7 +234,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				$post_type_name = $this->post_type_name;
 
 				// Metabox Variables
-				$box_id       = self::uglify( $title );
+				$box_id       = 'jl-fitcase-' . self::uglify( $title );
 				$box_title    = self::beautify( $title );
 				$box_context  = $context;
 				$box_priority = $priority;
@@ -265,7 +265,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									foreach ( $custom_fields as $label => $type ) {
 										$field_id_name = self::uglify( $data['id'] ) . '_' . self::uglify( $label );
 
-										echo '<label for="' . $field_id_name . '">' . $label . '</label><input type="text" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[$field_id_name][0] . '" />';
+										echo '<label for="' . $field_id_name . '">' . $label . '</label><input type="' . $type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[$field_id_name][0] . '" />';
 									}
 								}
 							},
