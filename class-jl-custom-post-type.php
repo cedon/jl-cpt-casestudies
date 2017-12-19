@@ -270,19 +270,38 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 										echo '<label for="' . $field_id_name . '" >' . $label . '</label>';
 
 										if ( $field_type == 'text' ) {
-											echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '" length="' . $field['size'] . '" />';
-										} elseif ( $field_type == 'select' ) {
+
+											$the_text_field = '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '"';
+
+											if ( isset ( $field['maxlength'] ) ) {
+												$the_text_field .= ' maxlength="' . $field['maxlength'] . '"';
+											}
+
+											if ( isset ( $field['size'] ) ) {
+												$the_text_field .= ' size="' . $field['size'];
+											}
+
+											$the_text_field .= ' />';
+
+											echo $the_text_field;
+
+																					} elseif ( $field_type == 'select' ) {
 											$select_options = $field['options'];
 											echo '<select name="custom_meta[' . $field_id_name . ']" id="' .
 											     $field_id_name . '" >';
 											echo '<option value=""></option>';
+
 											foreach ( $select_options as $option ) {
-												echo '<option value="' . $option . '" ' . selected(
-													$meta[$field_id_name][0], $option ) . '>' . $option . '</option>';
+												echo '<option value="' . $option . '" ' . selected( $meta[$field_id_name][0], $option ) . '>' . $option . '</option>';
 											}
+
 											echo '</select>';
 										} else {
 											echo 'Something Went VERY Wrong Here';
+										}
+
+										if ( isset ( $field['break'] ) && $field['break'] ==  true) {
+											echo '<br />';
 										}
 									}
 								}
