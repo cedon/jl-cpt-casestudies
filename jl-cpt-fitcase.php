@@ -23,9 +23,14 @@ $fitcase->add_taxonomy( 'Type' );
 $fitcase->add_meta_box(
 	'Client Info',
 	array(
-		'Client First Name' => 'text',
-		'Client Last Name'  => 'text',
-		'Client Age'        => 'number',
+		'Client First Name' => array(
+			'type' => 'text',
+			'size' => 128,
+		),
+		'Sex'               => array(
+			'type' => 'select',
+			'options' => array( 'Male', 'Female', 'Other' ),
+		),
 	)
 );
 

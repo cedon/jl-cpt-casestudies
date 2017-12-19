@@ -263,10 +263,27 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
-									foreach ( $custom_fields as $label => $type ) {
+									foreach ( $custom_fields as $label => $field ) {
 										$field_id_name = self::uglify( $data['id'] ) . '_' . self::uglify( $label );
+										$field_type    = self::uglify( $field['type'] );
 
-										echo '<label for="' . $field_id_name . '">' . $label . '</label><input type="' . $type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[$field_id_name][0] . '" />';
+										echo '<label for="' . $field_id_name . '" >' . $label . '</label>';
+
+										if ( $field_type == 'text' ) {
+											echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '" length="' . $field['size'] . '" />';
+										} elseif ( $field_type == 'select' ) {
+											$select_options = $field['options'];
+											echo '<select name="custom_meta[' . $field_id_name . ']" id="' .
+											     $field_id_name . '" >';
+											echo '<option value=""></option>';
+											foreach ( $select_options as $option ) {
+												echo '<option value="' . $option . '" ' . selected(
+													$meta[$field_id_name][0], $option ) . '>' . $option . '</option>';
+											}
+											echo '</select>';
+										} else {
+											echo 'Something Went VERY Wrong Here';
+										}
 									}
 								}
 							},
@@ -300,7 +317,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					}
 
 					// Abort if the nonce field is not set
-					if ( ! wp_verify_nonce( $_POST['custom_post_type'], JLFITCASE__PLUGIN_FILE ) ) {
+					if ( ! wp_verify_nonce( $_POST['jl-fitcase-nonce'], JLFITCASE__PLUGIN_FILE ) ) {
 						return;
 					}
 
