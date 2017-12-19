@@ -232,9 +232,10 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 				// Get Post Type Name
 				$post_type_name = $this->post_type_name;
+				error_log( $post_type_name );
 
 				// Metabox Variables
-				$box_id       = 'jl-fitcase-' . self::uglify( $title );
+				$box_id       = self::uglify( $title );
 				$box_title    = self::beautify( $title );
 				$box_context  = $context;
 				$box_priority = $priority;
@@ -252,7 +253,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								global $post;
 
 								// Nonce Field for Validation
-								wp_nonce_field( JLFITCASE__PLUGIN_FILE, 'custom_post_type' );
+								wp_nonce_field( JLFITCASE__PLUGIN_FILE, 'jl-fitcase-nonce' );
 
 								// Get Inputs from $data
 								$custom_fields = $data['args'][0];
