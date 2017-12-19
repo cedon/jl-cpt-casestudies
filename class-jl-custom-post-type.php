@@ -274,7 +274,14 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							$box_context,
 							$box_priority,
 							array( $fields )
-						);
+						); // add_meta_box()
+
+						function add_meta_box_class( $classes ) {
+							array_push( $classes, 'jl-fitcase-meta');
+							return $classes;
+						}
+						$filter_name = 'postbox_classes_' . $post_type_name . '_' . $box_id;
+						add_filter( $filter_name , 'add_meta_box_class' );
 					}
 				);
 			}
