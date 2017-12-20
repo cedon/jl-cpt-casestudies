@@ -232,7 +232,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 				// Get Post Type Name
 				$post_type_name = $this->post_type_name;
-				error_log( $post_type_name );
 
 				// Metabox Variables
 				$box_id       = self::uglify( $title );
