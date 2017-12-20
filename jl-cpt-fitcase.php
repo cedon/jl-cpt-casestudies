@@ -17,8 +17,14 @@ define( 'JLFITCASE__PLUGIN_FILE', __FILE__ );
 
 require_once( JLFITCASE__PLUGIN_DIR . 'class-jl-custom-post-type.php' );
 
+function jl_fitcase_flush_rewrite() {
+	flush_rewrite_rules();
+}
+register_activation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
+register_deactivation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
+
 $fitcase = new JL_CustomPostType( 'Case Study' );
-$fitcase->add_taxonomy( 'Type' );
+$fitcase->add_taxonomy( 'Fitness Goal' );
 
 $fitcase->add_meta_box(
 	'Client Info',
@@ -44,9 +50,6 @@ $fitcase->add_meta_box(
 		),
 	)
 );
-
-// Add Class to Post Meta Boxes
-
 
 // Load Custom Admin Styles
 function jl_fitcase_css() {
