@@ -285,14 +285,14 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 											echo $the_text_field;
 
-																					} elseif ( $field_type == 'select' ) {
+										} elseif ( $field_type == 'select' ) {
 											$select_options = $field['options'];
 											echo '<select name="custom_meta[' . $field_id_name . ']" id="' .
 											     $field_id_name . '" >';
 											echo '<option value=""></option>';
 
 											foreach ( $select_options as $option ) {
-												echo '<option value="' . $option . '" ' . selected( $meta[$field_id_name][0], $option ) . '>' . $option . '</option>';
+												echo '<option value="' . $option . '" ' . selected( $meta[ $field_id_name ][0], $option ) . '>' . $option . '</option>';
 											}
 
 											echo '</select>';
@@ -300,7 +300,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 											echo 'Something Went VERY Wrong Here';
 										}
 
-										if ( isset ( $field['break'] ) && $field['break'] ==  true) {
+										if ( isset ( $field['break'] ) && $field['break'] == true ) {
 											echo '<br />';
 										}
 									}
