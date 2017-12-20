@@ -24,7 +24,7 @@ register_activation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
 register_deactivation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
 
 $fitcase = new JL_CustomPostType( 'Case Study' );
-$fitcase->add_taxonomy( 'Fitness Goal' );
+$fitcase->add_taxonomy( 'Fitness Goal', array( 'hierarchical' => true ) );
 
 $fitcase->add_meta_box(
 	'Client Info',
