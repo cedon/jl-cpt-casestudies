@@ -45,11 +45,18 @@ $fitcase->add_meta_box(
 		'Age'        => array(
 			'type'  => 'text',
 			'maxlength'  => 1,
-			'size' => 4,
+			//'size' => 16,
 			'break' => true,
 		),
+		'History' => array(
+			'type'            => 'wpeditor',
+			'editor_settings' => array(
+				'media_buttons' => false,
+				'textarea_rows' => 5,
+			)
+		),
 	)
-);
+); // Client Info
 
 // Load Custom Admin Styles
 function jl_fitcase_css() {

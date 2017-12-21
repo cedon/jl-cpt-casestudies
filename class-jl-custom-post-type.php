@@ -260,6 +260,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
 
+
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
 									foreach ( $custom_fields as $label => $field ) {
@@ -295,6 +296,19 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 											}
 
 											echo '</select>';
+										} elseif ( $field_type == 'wpeditor' ) {
+											$editor_content = '';
+
+											if ( isset( $meta[ $field_id_name ] ) ) {
+												$editor_content = $meta[ $field_id_name ][0];
+											}
+
+											if ( isset( $field[ 'editor_settings' ] ) ) {
+												$editor_settings = $field[ 'editor_settings' ];
+												$editor_settings['textarea_name'] = "custom_meta[$field_id_name]";
+											}
+
+											wp_editor( $editor_content, $field_id_name, $editor_settings );
 										} else {
 											echo 'Something Went VERY Wrong Here';
 										}
@@ -311,12 +325,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							array( $fields )
 						); // add_meta_box()
 
-						function add_meta_box_class( $classes ) {
+						/*function add_meta_box_class( $classes ) {
 							array_push( $classes, 'jl-fitcase-meta');
 							return $classes;
 						}
 						$filter_name = 'postbox_classes_' . $post_type_name . '_' . $box_id;
-						add_filter( $filter_name , 'add_meta_box_class' );
+						add_filter( $filter_name , 'add_meta_box_class' );*/
 					}
 				);
 			}
