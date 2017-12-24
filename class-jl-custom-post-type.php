@@ -260,11 +260,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
 
-								// Send copy of $meta to error_log for diagnostics
-								error_log( '--- $meta ---' . PHP_EOL );
-								error_log( print_r( $meta, true ) );
-								error_log( '--- end $meta ---' . PHP_EOL );
-
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
 									foreach ( $custom_fields as $label => $field ) {
@@ -365,9 +360,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					}
 
 					global $post;
-					error_log( '--- $_POST ---' . PHP_EOL );
-					error_log( print_r( $_POST, true ) );
-					error_log( '--- end $_POST ---' . PHP_EOL );
 
 					if ( isset( $_POST ) && isset( $post->ID ) && get_post_type( $post->ID ) == $post_type_name ) {
 						global $custom_fields;
