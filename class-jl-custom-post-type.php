@@ -260,6 +260,10 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
 
+								// Send copy of $meta to error_log for diagnostics
+								error_log( '--- $meta ---' . PHP_EOL );
+								error_log( print_r( $meta, true ) );
+								error_log( '--- end $meta ---' . PHP_EOL );
 
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
@@ -296,6 +300,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 											}
 
 											echo '</select>';
+										} elseif ( $field_type == 'checkbox' ) {
+											echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) .
+											     '/>';
+
+										//} elseif ( $field_type == 'radio' ) {
+
 										} elseif ( $field_type == 'wpeditor' ) {
 											$editor_content = '';
 
@@ -351,6 +361,9 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					}
 
 					global $post;
+					error_log( '--- $_POST ---' . PHP_EOL );
+					error_log( print_r( $_POST, true ) );
+					error_log( '--- end $_POST ---' . PHP_EOL );
 
 					if ( isset( $_POST ) && isset( $post->ID ) && get_post_type( $post->ID ) == $post_type_name ) {
 						global $custom_fields;

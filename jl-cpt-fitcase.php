@@ -59,6 +59,21 @@ $fitcase->add_meta_box(
 	)
 ); // Client Info
 
+$fitcase->add_meta_box(
+	'Testing Checkboxes',
+	array(
+		'Checkbox One' => array(
+			'type' => 'checkbox',
+		),
+		'Checkbox Two' => array(
+			'type' => 'checkbox',
+		),
+		'Checkbox Three' => array(
+			'type' => 'checkbox',
+		),
+	)
+);
+
 // Load Custom Admin Styles
 function jl_fitcase_css() {
 	global $post_type;
