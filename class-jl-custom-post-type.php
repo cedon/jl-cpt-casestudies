@@ -301,11 +301,15 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 											echo '</select>';
 										} elseif ( $field_type == 'checkbox' ) {
-											echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) .
-											     '/>';
+											echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) . ' />';
 
-										//} elseif ( $field_type == 'radio' ) {
-
+										} elseif ( $field_type == 'radio' ) {
+											$radio_options = $field['radio'];
+											foreach ( $radio_options as $radio ) {
+												$the_field_id = $field_id_name . '_' . $radio;
+												echo '<label for="' . $field_id_name . '" >' . $radio . '</label>';
+												echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $the_field_id . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][ 0 ], $radio, false ) . ' />';
+											}
 										} elseif ( $field_type == 'wpeditor' ) {
 											$editor_content = '';
 

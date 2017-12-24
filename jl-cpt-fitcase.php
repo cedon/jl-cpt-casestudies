@@ -74,6 +74,15 @@ $fitcase->add_meta_box(
 	)
 );
 
+$fitcase->add_meta_box(
+	'Testing Rdio Buttons',
+	array(
+		'Radio One' => array(
+			'type' => 'radio',
+			'radio' => array( 'One', 'Two', 'Three', 'Four'),
+		),
+	)
+);
 // Load Custom Admin Styles
 function jl_fitcase_css() {
 	global $post_type;
