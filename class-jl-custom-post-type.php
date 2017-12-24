@@ -325,12 +325,9 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							array( $fields )
 						); // add_meta_box()
 
-						/*function add_meta_box_class( $classes ) {
-							array_push( $classes, 'jl-fitcase-meta');
-							return $classes;
-						}
+						// Add dynamic filter using function add_meta_box_class() located in functions.php
 						$filter_name = 'postbox_classes_' . $post_type_name . '_' . $box_id;
-						add_filter( $filter_name , 'add_meta_box_class' );*/
+						add_filter( $filter_name , 'add_meta_box_class' );
 					}
 				);
 			}
