@@ -15,7 +15,8 @@ define( 'JLFITCASE__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_FILE', __FILE__ );
 
-require_once( JLFITCASE__PLUGIN_DIR . 'class-jl-custom-post-type.php' );
+require_once ( JLFITCASE__PLUGIN_DIR . '_inc/functions.php');
+require_once ( JLFITCASE__PLUGIN_DIR . 'class-jl-custom-post-type.php' );
 
 function jl_fitcase_flush_rewrite() {
 	flush_rewrite_rules();
@@ -45,12 +46,43 @@ $fitcase->add_meta_box(
 		'Age'        => array(
 			'type'  => 'text',
 			'maxlength'  => 1,
-			'size' => 4,
+			//'size' => 16,
 			'break' => true,
+		),
+		'History' => array(
+			'type'            => 'wpeditor',
+			'editor_settings' => array(
+				'media_buttons' => false,
+				'textarea_rows' => 5,
+			)
+		),
+	)
+); // Client Info
+
+$fitcase->add_meta_box(
+	'Testing Checkboxes',
+	array(
+		'Checkbox One' => array(
+			'type' => 'checkbox',
+		),
+		'Checkbox Two' => array(
+			'type' => 'checkbox',
+		),
+		'Checkbox Three' => array(
+			'type' => 'checkbox',
 		),
 	)
 );
 
+$fitcase->add_meta_box(
+	'Testing Rdio Buttons',
+	array(
+		'Radio One' => array(
+			'type' => 'radio',
+			'radio' => array( 'One', 'Two', 'Three', 'Four'),
+		),
+	)
+);
 // Load Custom Admin Styles
 function jl_fitcase_css() {
 	global $post_type;

@@ -260,6 +260,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
 
+								// Send copy of $meta to error_log for diagnostics
+								error_log( '--- $meta ---' . PHP_EOL );
+								error_log( print_r( $meta, true ) );
+								error_log( '--- end $meta ---' . PHP_EOL );
+
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
 									foreach ( $custom_fields as $label => $field ) {
@@ -295,6 +300,29 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 											}
 
 											echo '</select>';
+										} elseif ( $field_type == 'checkbox' ) {
+											echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) . ' />';
+
+										} elseif ( $field_type == 'radio' ) {
+											$radio_options = $field['radio'];
+											foreach ( $radio_options as $radio ) {
+												$the_field_id = $field_id_name . '_' . $radio;
+												echo '<label for="' . $field_id_name . '" >' . $radio . '</label>';
+												echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $the_field_id . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][ 0 ], $radio, false ) . ' />';
+											}
+										} elseif ( $field_type == 'wpeditor' ) {
+											$editor_content = '';
+
+											if ( isset( $meta[ $field_id_name ] ) ) {
+												$editor_content = $meta[ $field_id_name ][0];
+											}
+
+											if ( isset( $field[ 'editor_settings' ] ) ) {
+												$editor_settings = $field[ 'editor_settings' ];
+												$editor_settings['textarea_name'] = "custom_meta[$field_id_name]";
+											}
+
+											wp_editor( $editor_content, $field_id_name, $editor_settings );
 										} else {
 											echo 'Something Went VERY Wrong Here';
 										}
@@ -311,10 +339,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							array( $fields )
 						); // add_meta_box()
 
-						function add_meta_box_class( $classes ) {
-							array_push( $classes, 'jl-fitcase-meta');
-							return $classes;
-						}
+						// Add dynamic filter using function add_meta_box_class() located in functions.php
 						$filter_name = 'postbox_classes_' . $post_type_name . '_' . $box_id;
 						add_filter( $filter_name , 'add_meta_box_class' );
 					}
@@ -340,6 +365,9 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					}
 
 					global $post;
+					error_log( '--- $_POST ---' . PHP_EOL );
+					error_log( print_r( $_POST, true ) );
+					error_log( '--- end $_POST ---' . PHP_EOL );
 
 					if ( isset( $_POST ) && isset( $post->ID ) && get_post_type( $post->ID ) == $post_type_name ) {
 						global $custom_fields;
