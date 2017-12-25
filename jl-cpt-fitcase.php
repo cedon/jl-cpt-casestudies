@@ -85,7 +85,10 @@ $fitcase->add_meta_box(
 );
 
 $fitcase->add_submenu_page(
-	'Options'
+	'Options',
+	array(
+		'Test One',
+	)
 );
 
 // Load Custom Admin Styles

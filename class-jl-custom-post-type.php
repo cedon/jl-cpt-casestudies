@@ -386,9 +386,10 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 * @access public
 		 *
 		 * @param string $title What appears in the browser window's title
+		 * @param array  $settings What option fields the user wants to add to the options page
 		 * @param string $capability (optional) What capabilities the user must have to access page (default is admin)
 		 */
-		public function add_submenu_page( $title, $capability = 'administrator' ) {
+		public function add_submenu_page( $title, $settings = array(), $capability = 'administrator' ) {
 
 			// Set variables
 			$post_type = self::uglify( $this->post_type_name );
@@ -396,17 +397,29 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			$menu_capability = $capability;
 			$parent_slug = 'edit.php?post_type=' . $post_type;
 			$menu_slug = self::uglify( $post_type ) . '_' . 'menu_' . self::uglify( $title );
+			$menu_settings = $settings;
 
 			add_action( 'admin_menu',
-				function() use( $parent_slug, $menu_title, $menu_capability, $menu_slug ) {
+				function() use( $parent_slug, $menu_title, $menu_capability, $menu_slug, $menu_settings ) {
+
 					add_submenu_page(
 						$parent_slug,
 						$menu_title,
 						$menu_title,
 						$menu_capability,
 						$menu_slug,
-						function() {
-							echo 'The Page Actually Worked!';
+						function() use( $menu_settings ) {
+							echo '<h1>' . self::beautify( $this->post_type_name ) . ' Options</h1>';
+
+							echo '<table class="form-table">';
+							echo '<tbody>';
+
+							foreach ( $menu_settings as $setting ) {
+								echo $setting;
+							}
+
+							echo '</tbody>';
+							echo '</table>';
 						}
 					);
 			} );
