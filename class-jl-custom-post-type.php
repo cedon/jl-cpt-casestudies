@@ -430,7 +430,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Create Label
 								echo '<tr>';
 								echo '<th scope="row">';
-								echo '<label for"' . $input_id . '" >' . self::beautify( $label ) . '</label>';
+								echo self::add_input_label( $input_id, $label );
 								echo '</th>';
 
 								// Create input element
@@ -445,6 +445,21 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 						}
 					);
 			} );
+		}
+
+		/**
+		 * Builds an HTML <label> element for an <input> element
+		 *
+		 * @since 1.0.0.
+		 * @access public
+		 *
+		 * @param $input_id (string) The value of the id attribute of the <input> element
+		 * @param $label (string) The text that will be shown inside the <label> element
+		 *
+		 * @return string The HTML <label> element
+		 */
+		public static function add_input_label( $input_id, $label ) {
+			return '<label for"' . $input_id . '" >' . self::beautify( $label ) . '</label>';
 		}
 
 		/**
