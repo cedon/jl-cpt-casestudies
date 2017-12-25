@@ -265,7 +265,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									foreach ( $custom_fields as $label => $field ) {
 										$field_id_name = self::uglify( $data['id'] ) . '_' . self::uglify( $label );
 										$field_type    = self::uglify( $field['type'] );
-										
+
 										if ( isset( $field['attributes'] ) ) {
 											$field_attributes = $field['attributes'];
 										}
@@ -420,11 +420,28 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							echo '<tbody>';
 
 							foreach ( $menu_settings as $label => $setting ) {
-								$attributes = $setting['attributes'];
 
-								error_log( '--- $setting --');
+								/*error_log( '--- $setting ---');
 								error_log( print_r( $setting, true ) );
+								error_log( '--- end $setting ---');*/
 
+								if ( isset( $setting['attributes'] ) ) {
+									$attributes = $setting['attributes'];
+								} else {
+									$attributes = array();
+								}
+
+								if ( isset( $setting['select_options'] ) ) {
+									$select_options = $setting['select_options'];
+								} else {
+									$select_options = array();
+								}
+
+								if ( isset( $setting['wpeditor_settings'] ) ) {
+									$wpeditor_settings = $setting['wpeditor_settings'];
+								} else {
+									$wpeditor_settings = array();
+								}
 
 								$input_id = self::uglify( $menu_page_name ) . '_' . self::uglify( $label );
 								// Create Label
@@ -435,7 +452,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 								// Create input element
 								echo '<td>';
-								echo self::add_form_field( $input_id, $setting['type'], $attributes );
+								echo self::add_form_field( $input_id, $setting['type'], $attributes, $select_options,
+								$wpeditor_settings	);
 								echo '</td>';
 								echo '</tr>';
 							}
@@ -468,7 +486,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 * @since 1.0.0
 		 * @access public
 		 *
-		 * @param string $field_id  The value of the element's id attribute
+		 * @param string $field_id_name  The value of the element's id attribute
 		 * @param string $field_type The type of form field being created
 		 * @param array $attributes (optional) An array of attributes for an input element
 		 * @param array $select_options (optional) An array of options for use in a select element
@@ -477,22 +495,34 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 * @return string The form element to be displayed by the browser
 		 */
 		public static function add_form_field(
-			$field_id, $field_type, $attributes = array(), $select_options = array(), $wpeditor_settings = array()
+			$field_id_name, $field_type, $attributes, $select_options, $wpeditor_settings
 		) {
+
+			global $meta;
+
 			// Initialze the form element
 			$form_element = '';
 
 			if ( $field_type == 'text' ) {
-				$form_element = '<input type="' . $field_type . '" name="fitcase[' . $field_id . ']" id="' . 
+				$form_element = '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' .
 				                $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '"';
-				
+
 				if ( isset( $attributes ) && ! empty( $attributes) ) {
 					$form_element .= self::input_attributes( $attributes );
 				}
-				
+
 				$form_element .= ' />';
 			}
 
+			if ( $field_type == 'select' ) {
+				$form_element .= '<select>';
+
+				foreach ( $select_options as $option ) {
+					$form_element .= '<option value="' . $option . '" ' . selected( $meta[ $field_id_name ][0], $option ) . '>' . $option . '</option>';
+				}
+
+				$form_element .= '</select>';
+			}
 			return $form_element;
 		}
 

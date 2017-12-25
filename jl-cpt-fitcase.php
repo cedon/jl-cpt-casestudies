@@ -98,6 +98,10 @@ $fitcase->add_submenu_page(
 			'attributes' => array(
 				'maxlength' => 64,
 			),
+		),
+		'Sex'        => array(
+			'type'    => 'select',
+			'select_options' => array( 'Male', 'Female', 'Other' )
 		)
 	)
 );
