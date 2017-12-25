@@ -265,6 +265,10 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									foreach ( $custom_fields as $label => $field ) {
 										$field_id_name = self::uglify( $data['id'] ) . '_' . self::uglify( $label );
 										$field_type    = self::uglify( $field['type'] );
+										
+										if ( isset( $field['attributes'] ) ) {
+											$field_attributes = $field['attributes'];
+										}
 
 										echo '<label for="' . $field_id_name . '" >' . $label . '</label>';
 
@@ -423,6 +427,39 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 						}
 					);
 			} );
+		}
+
+		/**
+		 * Builds the attributes for an HTML <input> element based on an array
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 *
+		 * @param array $attributes (array) An array of valid HTML attributes
+		 *
+		 * @return string The attribute string for the <input> element
+		 */
+		public static function input_attributes( $attributes ) {
+			// Initialize HTML attributes to be returned
+			$input_attributes = '';
+
+			// Arrays for validation
+			$num_attribs  = array( 'maxlength', 'min', 'size' );
+			$bool_attribs = array( 'required' );
+
+			foreach ( $attributes as $attribute => $value ) {
+				// Make sure the attribute is all lower-case
+				$attribute = strtolower( $attribute );
+
+				if ( in_array( $attribute, $num_attribs ) and is_int( $value ) ) {
+					$input_attributes .= $attribute . '="' . $value . '" ';
+				} elseif ( in_array( $attribute, $bool_attribs ) and is_bool( $value ) ) {
+					$eval            = ( $value ) ? 'true' : 'false';
+					$input_attributes .= $attribute . '="' . $eval . '" ';
+				}
+
+				return $input_attributes;
+			}
 		}
 
 		/**
