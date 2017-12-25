@@ -274,7 +274,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 										if ( $field_type == 'text' ) {
 
-											$the_text_field = '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '"';
+											$the_text_field = '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '"';
 
 											if ( isset ( $field['maxlength'] ) ) {
 												$the_text_field .= ' maxlength="' . $field['maxlength'] . '"';
@@ -290,7 +290,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 										} elseif ( $field_type == 'select' ) {
 											$select_options = $field['options'];
-											echo '<select name="custom_meta[' . $field_id_name . ']" id="' .
+											echo '<select name="fitcase[' . $field_id_name . ']" id="' .
 											     $field_id_name . '" >';
 											echo '<option value=""></option>';
 
@@ -300,14 +300,14 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 											echo '</select>';
 										} elseif ( $field_type == 'checkbox' ) {
-											echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) . ' />';
+											echo '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) . ' />';
 
 										} elseif ( $field_type == 'radio' ) {
 											$radio_options = $field['radio'];
 											foreach ( $radio_options as $radio ) {
 												$the_field_id = $field_id_name . '_' . $radio;
 												echo '<label for="' . $field_id_name . '" >' . $radio . '</label>';
-												echo '<input type="' . $field_type . '" name="custom_meta[' . $field_id_name . ']" id="' . $the_field_id . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][ 0 ], $radio, false ) . ' />';
+												echo '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $the_field_id . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][ 0 ], $radio, false ) . ' />';
 											}
 										} elseif ( $field_type == 'wpeditor' ) {
 											$editor_content = '';
@@ -318,7 +318,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 											if ( isset( $field[ 'editor_settings' ] ) ) {
 												$editor_settings = $field[ 'editor_settings' ];
-												$editor_settings['textarea_name'] = "custom_meta[$field_id_name]";
+												$editor_settings['textarea_name'] = "fitcase[$field_id_name]";
 											}
 
 											wp_editor( $editor_content, $field_id_name, $editor_settings );
@@ -435,7 +435,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 								// Create input element
 								echo '<td>';
-								echo '<input type="' . $setting['type'] . '" ' . self::input_attributes( $attributes ) . ' />';
+								echo self::add_form_field( $input_id, $setting['type'], $attributes );
 								echo '</td>';
 								echo '</tr>';
 							}
@@ -460,6 +460,40 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 */
 		public static function add_input_label( $input_id, $label ) {
 			return '<label for"' . $input_id . '" >' . self::beautify( $label ) . '</label>';
+		}
+
+		/**
+		 * Builds and HTML form field for use in a meta box or admin options page
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 *
+		 * @param string $field_id  The value of the element's id attribute
+		 * @param string $field_type The type of form field being created
+		 * @param array $attributes (optional) An array of attributes for an input element
+		 * @param array $select_options (optional) An array of options for use in a select element
+		 * @param array $wpeditor_settings (optional) An array of settings to be passed to a WP Editor call
+		 *
+		 * @return string The form element to be displayed by the browser
+		 */
+		public static function add_form_field(
+			$field_id, $field_type, $attributes = array(), $select_options = array(), $wpeditor_settings = array()
+		) {
+			// Initialze the form element
+			$form_element = '';
+
+			if ( $field_type == 'text' ) {
+				$form_element = '<input type="' . $field_type . '" name="fitcase[' . $field_id . ']" id="' . 
+				                $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '"';
+				
+				if ( isset( $attributes ) && ! empty( $attributes) ) {
+					$form_element .= self::input_attributes( $attributes );
+				}
+				
+				$form_element .= ' />';
+			}
+
+			return $form_element;
 		}
 
 		/**
