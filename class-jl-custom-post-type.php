@@ -380,6 +380,39 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		}
 
 		/**
+		 * Adds a sub menu to the custom post type menu for things like adding options to be stored in the database.
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 *
+		 * @param string $title What appears in the browser window's title
+		 * @param string $capability (optional) What capabilities the user must have to access page (default is admin)
+		 */
+		public function add_submenu_page( $title, $capability = 'administrator' ) {
+
+			// Set variables
+			$post_type = self::uglify( $this->post_type_name );
+			$menu_title = self::beautify( $title );
+			$menu_capability = $capability;
+			$parent_slug = 'edit.php?post_type=' . $post_type;
+			$menu_slug = self::uglify( $post_type ) . '_' . 'menu_' . self::uglify( $title );
+
+			add_action( 'admin_menu',
+				function() use( $parent_slug, $menu_title, $menu_capability, $menu_slug ) {
+					add_submenu_page(
+						$parent_slug,
+						$menu_title,
+						$menu_title,
+						$menu_capability,
+						$menu_slug,
+						function() {
+							echo 'The Page Actually Worked!';
+						}
+					);
+			} );
+		}
+
+		/**
 		 * Changes a string like 'my_string' to 'My String' for display purposes
 		 *
 		 * @since 1.0

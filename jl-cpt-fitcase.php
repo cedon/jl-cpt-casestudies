@@ -83,6 +83,11 @@ $fitcase->add_meta_box(
 		),
 	)
 );
+
+$fitcase->add_submenu_page(
+	'Options'
+);
+
 // Load Custom Admin Styles
 function jl_fitcase_css() {
 	global $post_type;
