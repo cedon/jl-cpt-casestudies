@@ -87,7 +87,18 @@ $fitcase->add_meta_box(
 $fitcase->add_submenu_page(
 	'Options',
 	array(
-		'Test One',
+		'Test One' => array(
+			'type' => 'text',
+			'attributes' => array(
+				'maxlength' => 32,
+			),
+		),
+		'Test Two' => array(
+			'type' => 'text',
+			'attributes' => array(
+				'maxlength' => 64,
+			),
+		)
 	)
 );
 

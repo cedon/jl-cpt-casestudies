@@ -412,14 +412,32 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 						$menu_title,
 						$menu_capability,
 						$menu_slug,
-						function() use( $menu_settings ) {
-							echo '<h1>' . self::beautify( $this->post_type_name ) . ' Options</h1>';
+						function() use( $menu_settings, $menu_title ) {
+							$menu_page_name = self::beautify( $this->post_type_name ) . ' ' . $menu_title;
+							echo '<h1>' . $menu_page_name . '</h1>';
 
 							echo '<table class="form-table">';
 							echo '<tbody>';
 
-							foreach ( $menu_settings as $setting ) {
-								echo $setting;
+							foreach ( $menu_settings as $label => $setting ) {
+								$attributes = $setting['attributes'];
+
+								error_log( '--- $setting --');
+								error_log( print_r( $setting, true ) );
+
+
+								$input_id = self::uglify( $menu_page_name ) . '_' . self::uglify( $label );
+								// Create Label
+								echo '<tr>';
+								echo '<th scope="row">';
+								echo '<label for"' . $input_id . '" >' . self::beautify( $label ) . '</label>';
+								echo '</th>';
+
+								// Create input element
+								echo '<td>';
+								echo '<input type="' . $setting['type'] . '" ' . self::input_attributes( $attributes ) . ' />';
+								echo '</td>';
+								echo '</tr>';
 							}
 
 							echo '</tbody>';
