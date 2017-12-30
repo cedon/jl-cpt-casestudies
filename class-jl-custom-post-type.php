@@ -390,7 +390,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 * @access public
 		 *
 		 * @param string $title What appears in the browser window's title
-		 * @param array  $settings What option fields the user wants to add to the options page
+		 * @param array $settings What option fields the user wants to add to the options page
 		 * @param string $capability (optional) What capabilities the user must have to access page (default is admin)
 		 */
 		public function add_submenu_page( $title, $settings = array(), $capability = 'administrator' ) {
@@ -400,11 +400,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			$menu_title = self::beautify( $title );
 			$menu_capability = $capability;
 			$parent_slug = 'edit.php?post_type=' . $post_type;
-			$menu_slug = self::uglify( $post_type ) . '_' . 'menu_' . self::uglify( $title );
+			$menu_slug = $post_type . '_' . 'menu_' . self::uglify( $title );
 			$menu_settings = $settings;
 
 			add_action( 'admin_menu',
-				function() use( $parent_slug, $menu_title, $menu_capability, $menu_slug, $menu_settings ) {
+				function() use( $post_type, $parent_slug, $menu_title, $menu_capability, $menu_slug, $menu_settings ) {
 
 					add_submenu_page(
 						$parent_slug,
@@ -412,10 +412,17 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 						$menu_title,
 						$menu_capability,
 						$menu_slug,
-						function() use( $menu_settings, $menu_title ) {
+						function() use( $post_type, $menu_settings, $menu_title ) {
 							$menu_page_name = self::beautify( $this->post_type_name ) . ' ' . $menu_title;
+
+							$option_group = $post_type . '_' . self::uglify( $menu_title ) . '_options';
+							settings_fields( $option_group );
+							do_settings_sections( $option_group );
+
+							echo '<div class="wrap">';
 							echo '<h1>' . $menu_page_name . '</h1>';
 
+							echo '<form method="post" action="options.php">';
 							echo '<table class="form-table">';
 							echo '<tbody>';
 
@@ -437,12 +444,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									$select_options = array();
 								}
 
-								if ( isset( $setting['wpeditor_settings'] ) ) {
-									$wpeditor_settings = $setting['wpeditor_settings'];
-								} else {
-									$wpeditor_settings = array();
-								}
-
 								$input_id = self::uglify( $menu_page_name ) . '_' . self::uglify( $label );
 								// Create Label
 								echo '<tr>';
@@ -452,14 +453,19 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 								// Create input element
 								echo '<td>';
-								echo self::add_form_field( $input_id, $setting['type'], $attributes, $select_options,
-								$wpeditor_settings	);
+								echo self::add_admin_option_field( $option_group, $input_id, $setting['type'],
+									$attributes, $select_options );
 								echo '</td>';
 								echo '</tr>';
 							}
 
 							echo '</tbody>';
 							echo '</table>';
+
+							submit_button();
+
+							echo '</form>';
+							echo '</div>';
 						}
 					);
 			} );
@@ -481,31 +487,29 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		}
 
 		/**
-		 * Builds and HTML form field for use in a meta box or admin options page
+		 * Builds and HTML form field for use in an admin options page
 		 *
 		 * @since 1.0.0
 		 * @access public
 		 *
-		 * @param string $field_id_name  The value of the element's id attribute
+		 * @param string $option_group The option group the admin page settings will be stored in WordPress database
+		 * @param string $field_id_name The value of the element's id attribute
 		 * @param string $field_type The type of form field being created
 		 * @param array $attributes (optional) An array of attributes for an input element
 		 * @param array $select_options (optional) An array of options for use in a select element
-		 * @param array $wpeditor_settings (optional) An array of settings to be passed to a WP Editor call
 		 *
 		 * @return string The form element to be displayed by the browser
 		 */
-		public static function add_form_field(
-			$field_id_name, $field_type, $attributes, $select_options, $wpeditor_settings
+		public static function add_admin_option_field(
+			$option_group, $field_id_name, $field_type, $attributes, $select_options
 		) {
-
-			global $meta;
 
 			// Initialze the form element
 			$form_element = '';
 
 			if ( $field_type == 'text' ) {
-				$form_element = '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' .
-				                $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '"';
+				$form_element = '<input type="' . $field_type . '" name="' . $field_id_name . '" id="' .
+				                $field_id_name . '" value="' . esc_attr( get_option( $field_id_name ) ) . '" ';
 
 				if ( isset( $attributes ) && ! empty( $attributes) ) {
 					$form_element .= self::input_attributes( $attributes );
@@ -518,11 +522,22 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				$form_element .= '<select>';
 
 				foreach ( $select_options as $option ) {
-					$form_element .= '<option value="' . $option . '" ' . selected( $meta[ $field_id_name ][0], $option ) . '>' . $option . '</option>';
+					$form_element .= '<option value="' . $option . '" ' . selected( get_option( $field_id_name ), $option ) . '>' .
+					                 $option . '</option>';
 				}
 
 				$form_element .= '</select>';
 			}
+
+			if ( $field_type == 'checkbox' ) {
+				$form_element .= '<input type="' . $field_type . '" name="' . $field_id_name . '" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( get_option( $field_id_name ), $field_id_name, false ) . ' />';
+			}
+
+			// Register Setting
+			add_action( 'admin_init', function() use( $option_group, $field_id_name ) {
+				register_setting( $option_group, $field_id_name );
+			});
+
 			return $form_element;
 		}
 
@@ -554,9 +569,10 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					$eval            = ( $value ) ? 'true' : 'false';
 					$input_attributes .= $attribute . '="' . $eval . '" ';
 				}
-
-				return $input_attributes;
 			}
+
+			return $input_attributes;
+
 		}
 
 		/**
