@@ -211,8 +211,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					);
 				}
 			}
-
-
 		}
 
 		/**
@@ -384,20 +382,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		}
 
 		/**
-		 * Adds a sub menu to the custom post type menu for things like adding options to be stored in the database.
-		 *
-		 * @since 1.0.0
-		 * @access public
-		 *
-		 * @param string $title What appears in the browser window's title
-		 * @param array $settings What option fields the user wants to add to the options page
-		 * @param string $capability (optional) What capabilities the user must have to access page (default is admin)
-		 */
-		public function add_submenu_page( $title, $settings = array(), $capability = 'administrator' ) {
-			// Method to be re-written
-		}
-
-		/**
 		 * Builds an HTML <label> element for an <input> element
 		 *
 		 * @since 1.0.0.
@@ -410,27 +394,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 */
 		public static function add_input_label( $input_id, $label ) {
 			return '<label for"' . $input_id . '" >' . self::beautify( $label ) . '</label>';
-		}
-
-		/**
-		 * Builds and HTML form field for use in an admin options page
-		 *
-		 * @since 1.0.0
-		 * @access public
-		 *
-		 * @param string $field_id_name The value of the element's id attribute
-		 * @param string $field_type The type of form field being created
-		 * @param array $attributes (optional) An array of attributes for an input element
-		 * @param array $select_options (optional) An array of options for use in a select element
-		 *
-		 * @return string The form element to be displayed by the browser
-		 */
-		public static function add_admin_option_field(
-			$field_id_name, $field_type, $attributes, $select_options
-		) {
-			// Method to be re-written
-
-			return $form_element;
 		}
 
 		/**
