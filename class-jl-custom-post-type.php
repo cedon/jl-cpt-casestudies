@@ -394,102 +394,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 * @param string $capability (optional) What capabilities the user must have to access page (default is admin)
 		 */
 		public function add_submenu_page( $title, $settings = array(), $capability = 'administrator' ) {
-
-			// Set variables
-			$post_type = self::uglify( $this->post_type_name );
-			$menu_title = self::beautify( $title );
-			$menu_capability = $capability;
-			$parent_slug = 'edit.php?post_type=' . $post_type;
-			$menu_slug = $post_type . '_' . 'menu_' . self::uglify( $title );
-			$menu_settings = $settings;
-
-			add_action( 'admin_menu',
-				function() use( $post_type, $parent_slug, $menu_title, $menu_capability, $menu_slug, $menu_settings ) {
-
-					add_submenu_page(
-						$parent_slug,
-						$menu_title,
-						$menu_title,
-						$menu_capability,
-						$menu_slug,
-						function() use( $post_type, $menu_settings, $menu_title, $menu_slug ) {
-
-							$menu_page_name = self::beautify( $this->post_type_name ) . ' ' . $menu_title;
-							$option_group = $post_type . '_' . self::uglify( $menu_title ) . '_options';
-
-							foreach ( $menu_settings as $label => $setting ) {
-
-								$input_id = self::uglify( $menu_page_name ) . '_' . self::uglify( $label );
-
-								if ( isset( $setting['attributes'] ) ) {
-									$attributes = $setting['attributes'];
-								} else {
-									$attributes = array();
-								}
-
-								if ( isset( $setting['select_options'] ) ) {
-									$select_options = $setting['select_options'];
-								} else {
-									$select_options = array();
-								}
-
-								error_log( 'ZOMG! ADDING SETTINGS! ');
-
-
-								// Add Setting
-								add_action( 'admin_init', function() use ( $input_id, $label, $option_group, $setting, $attributes,
-									$select_options, $menu_slug ) {
-
-									error_log( 'Adding option for ' . $label . PHP_EOL );
-
-									add_settings_field(
-										$input_id,
-										$label,
-										function () use (
-											$input_id, $label, $option_group, $setting, $attributes,
-											$select_options
-										) {
-
-											// Create Label
-											//echo '<tr>';
-											//echo '<th scope="row">';
-											echo self::add_input_label( $input_id, $label );
-											//echo '</th>';
-
-											// Create input element
-											//echo '<td>';
-											echo self::add_admin_option_field( $input_id, $setting['type'],
-												$attributes, $select_options );
-											//echo '</td>';
-											//echo '</tr>';
-										},
-										$menu_slug
-									);
-								} );
-
-								// Register Setting
-								add_action( 'admin_menu', function() use( $option_group, $input_id ) {
-									error_log( 'Setting Option Group: ' . $option_group );
-									error_log( 'Setting Field ID: ' . $input_id );
-									register_setting( $option_group, $input_id );
-								} );
-
-							}
-
-							echo '<form method="post" action="options.php">';
-
-							settings_fields( $option_group );
-							do_settings_fields( $option_group );
-							//echo '</tbody>';
-							//echo '</table>';
-
-							submit_button();
-
-							echo '</form>';
-							echo '</div>';
-						}
-					);
-			} );
+			// Method to be re-written
 		}
 
 		/**
@@ -523,35 +428,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		public static function add_admin_option_field(
 			$field_id_name, $field_type, $attributes, $select_options
 		) {
-
-			// Initialze the form element
-			$form_element = '';
-
-			if ( $field_type == 'text' ) {
-				$form_element = '<input type="' . $field_type . '" name="' . $field_id_name . '" id="' .
-				                $field_id_name . '" value="' . esc_attr( get_option( $field_id_name ) ) . '" ';
-
-				if ( isset( $attributes ) && ! empty( $attributes) ) {
-					$form_element .= self::input_attributes( $attributes );
-				}
-
-				$form_element .= ' />';
-			}
-
-			if ( $field_type == 'select' ) {
-				$form_element .= '<select>';
-
-				foreach ( $select_options as $option ) {
-					$form_element .= '<option value="' . $option . '" ' . selected( get_option( $field_id_name ), $option ) . '>' .
-					                 $option . '</option>';
-				}
-
-				$form_element .= '</select>';
-			}
-
-			if ( $field_type == 'checkbox' ) {
-				$form_element .= '<input type="' . $field_type . '" name="' . $field_id_name . '" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( get_option( $field_id_name ), $field_id_name, false ) . ' />';
-			}
+			// Method to be re-written
 
 			return $form_element;
 		}
