@@ -431,6 +431,78 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		}
 
 		/**
+		 * Creates a field for use in a custom post type meta box.
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 *
+		 * @param string $field_id_name The id attribute of the form element
+		 * @param string $field_type The type of form element to be created
+		 * @param array $meta An array of meta values retrieved from the database if they exist
+		 * @param array $attributes An array of HTML attributes and values to be used in the  meta field form element
+		 * @param array $select_options An array of labels to be used on option elements for a select element
+		 * @param array $radio_options An array of labels to be used to create radio buttons within a group
+		 * @param array $wpeditor_options An array of settings to be passed for an instance of wp_editor()
+		 *
+		 * @return string The custom meta as HTML form element
+		 */
+		function add_meta_field( $field_id_name, $field_type, $meta, $attributes, $select_options, $radio_options,
+			$wpeditor_options ) {
+
+			// Initialize Meta Field
+			$meta_field = '';
+
+			// Text Fields
+			if ( $field_type == 'text' ) {
+				$meta_field .= '<input type="' . $field_type . '" name="' . $field_id_name . '" id="' .
+				                $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '" ';
+
+				if ( isset( $attributes ) && ! empty( $attributes ) ) {
+					$meta_field .= self::input_attributes( $attributes );
+				}
+
+				$meta_field .= ' />';
+			}
+
+			// Select Elements
+			if ( $field_type == 'select' ) {
+				$meta_field .= '<select>';
+
+				foreach ( $select_options as $option ) {
+					$meta_field .= '<option value="' . $option . '" ' . selected( $meta[ $field_id_name ][0],
+							$option ) . ' >' .
+					                 $option . '</option>';
+				}
+
+				$meta_field .= '</select>';
+			}
+
+			// Check Boxes
+			if ( $field_type == 'checkbox' ) {
+				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) . ' />';
+			}
+
+			// Radio Buttons
+			if ( $field_type == 'radio' ) {
+				foreach ( $radio_options as $radio )
+				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][ 0 ], $radio, false ) . ' />';
+			}
+
+			// wp_editor() Instance
+			if ( $field_type == 'wpeditor' ) {
+				if ( isset( $meta[ $field_id_name ] ) ) {
+					$editor_content = $meta[ $field_id_name ];
+				} else {
+					$editor_content = '';
+				}
+				wp_editor( $editor_content, $field_id_name, $wpeditor_options );
+			}
+
+			// Return Completed Meta Field
+			return $meta_field;
+		}
+
+		/**
 		 * Changes a string like 'my_string' to 'My String' for display purposes
 		 *
 		 * @since 1.0
