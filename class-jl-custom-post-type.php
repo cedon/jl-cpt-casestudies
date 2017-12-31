@@ -412,25 +412,14 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 						$menu_title,
 						$menu_capability,
 						$menu_slug,
-						function() use( $post_type, $menu_settings, $menu_title ) {
+						function() use( $post_type, $menu_settings, $menu_title, $menu_slug ) {
+
 							$menu_page_name = self::beautify( $this->post_type_name ) . ' ' . $menu_title;
-
 							$option_group = $post_type . '_' . self::uglify( $menu_title ) . '_options';
-							settings_fields( $option_group );
-							do_settings_sections( $option_group );
-
-							echo '<div class="wrap">';
-							echo '<h1>' . $menu_page_name . '</h1>';
-
-							echo '<form method="post" action="options.php">';
-							echo '<table class="form-table">';
-							echo '<tbody>';
 
 							foreach ( $menu_settings as $label => $setting ) {
 
-								/*error_log( '--- $setting ---');
-								error_log( print_r( $setting, true ) );
-								error_log( '--- end $setting ---');*/
+								$input_id = self::uglify( $menu_page_name ) . '_' . self::uglify( $label );
 
 								if ( isset( $setting['attributes'] ) ) {
 									$attributes = $setting['attributes'];
@@ -444,23 +433,55 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									$select_options = array();
 								}
 
-								$input_id = self::uglify( $menu_page_name ) . '_' . self::uglify( $label );
-								// Create Label
-								echo '<tr>';
-								echo '<th scope="row">';
-								echo self::add_input_label( $input_id, $label );
-								echo '</th>';
+								error_log( 'ZOMG! ADDING SETTINGS! ');
 
-								// Create input element
-								echo '<td>';
-								echo self::add_admin_option_field( $option_group, $input_id, $setting['type'],
-									$attributes, $select_options );
-								echo '</td>';
-								echo '</tr>';
+
+								// Add Setting
+								add_action( 'admin_init', function() use ( $input_id, $label, $option_group, $setting, $attributes,
+									$select_options, $menu_slug ) {
+
+									error_log( 'Adding option for ' . $label . PHP_EOL );
+
+									add_settings_field(
+										$input_id,
+										$label,
+										function () use (
+											$input_id, $label, $option_group, $setting, $attributes,
+											$select_options
+										) {
+
+											// Create Label
+											//echo '<tr>';
+											//echo '<th scope="row">';
+											echo self::add_input_label( $input_id, $label );
+											//echo '</th>';
+
+											// Create input element
+											//echo '<td>';
+											echo self::add_admin_option_field( $input_id, $setting['type'],
+												$attributes, $select_options );
+											//echo '</td>';
+											//echo '</tr>';
+										},
+										$menu_slug
+									);
+								} );
+
+								// Register Setting
+								add_action( 'admin_menu', function() use( $option_group, $input_id ) {
+									error_log( 'Setting Option Group: ' . $option_group );
+									error_log( 'Setting Field ID: ' . $input_id );
+									register_setting( $option_group, $input_id );
+								} );
+
 							}
 
-							echo '</tbody>';
-							echo '</table>';
+							echo '<form method="post" action="options.php">';
+
+							settings_fields( $option_group );
+							do_settings_fields( $option_group );
+							//echo '</tbody>';
+							//echo '</table>';
 
 							submit_button();
 
@@ -492,7 +513,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 * @since 1.0.0
 		 * @access public
 		 *
-		 * @param string $option_group The option group the admin page settings will be stored in WordPress database
 		 * @param string $field_id_name The value of the element's id attribute
 		 * @param string $field_type The type of form field being created
 		 * @param array $attributes (optional) An array of attributes for an input element
@@ -501,7 +521,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 * @return string The form element to be displayed by the browser
 		 */
 		public static function add_admin_option_field(
-			$option_group, $field_id_name, $field_type, $attributes, $select_options
+			$field_id_name, $field_type, $attributes, $select_options
 		) {
 
 			// Initialze the form element
@@ -532,11 +552,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			if ( $field_type == 'checkbox' ) {
 				$form_element .= '<input type="' . $field_type . '" name="' . $field_id_name . '" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( get_option( $field_id_name ), $field_id_name, false ) . ' />';
 			}
-
-			// Register Setting
-			add_action( 'admin_init', function() use( $option_group, $field_id_name ) {
-				register_setting( $option_group, $field_id_name );
-			});
 
 			return $form_element;
 		}
