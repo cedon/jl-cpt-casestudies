@@ -264,65 +264,38 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 										$field_id_name = self::uglify( $data['id'] ) . '_' . self::uglify( $label );
 										$field_type    = self::uglify( $field['type'] );
 
-										if ( isset( $field['attributes'] ) ) {
-											$field_attributes = $field['attributes'];
-										}
-
-										echo '<label for="' . $field_id_name . '" >' . $label . '</label>';
-
-										if ( $field_type == 'text' ) {
-
-											$the_text_field = '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '"';
-
-											if ( isset ( $field['maxlength'] ) ) {
-												$the_text_field .= ' maxlength="' . $field['maxlength'] . '"';
-											}
-
-											if ( isset ( $field['size'] ) ) {
-												$the_text_field .= ' size="' . $field['size'];
-											}
-
-											$the_text_field .= ' />';
-
-											echo $the_text_field;
-
-										} elseif ( $field_type == 'select' ) {
-											$select_options = $field['options'];
-											echo '<select name="fitcase[' . $field_id_name . ']" id="' .
-											     $field_id_name . '" >';
-											echo '<option value=""></option>';
-
-											foreach ( $select_options as $option ) {
-												echo '<option value="' . $option . '" ' . selected( $meta[ $field_id_name ][0], $option ) . '>' . $option . '</option>';
-											}
-
-											echo '</select>';
-										} elseif ( $field_type == 'checkbox' ) {
-											echo '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) . ' />';
-
-										} elseif ( $field_type == 'radio' ) {
-											$radio_options = $field['radio'];
-											foreach ( $radio_options as $radio ) {
-												$the_field_id = $field_id_name . '_' . $radio;
-												echo '<label for="' . $field_id_name . '" >' . $radio . '</label>';
-												echo '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $the_field_id . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][ 0 ], $radio, false ) . ' />';
-											}
-										} elseif ( $field_type == 'wpeditor' ) {
-											$editor_content = '';
-
-											if ( isset( $meta[ $field_id_name ] ) ) {
-												$editor_content = $meta[ $field_id_name ][0];
-											}
-
-											if ( isset( $field[ 'editor_settings' ] ) ) {
-												$editor_settings = $field[ 'editor_settings' ];
-												$editor_settings['textarea_name'] = "fitcase[$field_id_name]";
-											}
-
-											wp_editor( $editor_content, $field_id_name, $editor_settings );
+										// Check for attributes in the field
+										if ( isset( $field['attributes'] ) && ! empty ( $field['attributes'] ) ) {
+											$attributes = $field['attributes'];
 										} else {
-											echo 'Something Went VERY Wrong Here';
+											$attributes = array();
 										}
+
+										// Check for select options in the field definition
+										if ( isset( $field['select_options'] ) && ! empty ( $field['select_options'] ) ) {
+											$select_options = $field['select_options'];
+										} else {
+											$select_options = array();
+										}
+
+										// Check for radio options in the field definition
+										if ( isset( $field['radio_options'] ) && ! empty ( $field['radio_options'] ) ) {
+											$radio_options = $field['radio_options'];
+										} else {
+											$radio_options = array();
+										}
+
+										// Check for wp_editor() options in field definition
+										if ( isset( $field['wpeditor_options'] ) && ! empty( $field['wpeditor_options'] ) ) {
+											$wpedior_settings = $field['wpeditor_options'];
+										} else {
+											$wpedior_settings = array();
+										}
+
+										echo self::add_input_label( $field_id_name, $label );
+										echo self::add_meta_field( $field_id_name, $field_type, $meta,
+										$attributes,
+											$select_options, $radio_options, $wpedior_settings );
 
 										if ( isset ( $field['break'] ) && $field['break'] == true ) {
 											echo '<br />';
@@ -366,13 +339,25 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					if ( isset( $_POST ) && isset( $post->ID ) && get_post_type( $post->ID ) == $post_type_name ) {
 						global $custom_fields;
 
+						error_log( print_r( $_POST, true) );
 						// Loop through all meta boxes
 						foreach ( $custom_fields as $title => $fields ) {
 
+							//error_log( 'Title: '. $title . PHP_EOL );
+
 							// Loop through all fields in meta box
 							foreach ( $fields as $label => $type ) {
+								// error_log( 'Label: '. $label . PHP_EOL );
+
 								$field_name = self::uglify( $title ) . '_' . self::uglify( $label );
-								update_post_meta( $post->ID, $field_name, $_POST['custom_meta'][ $field_name ] );
+
+								// Prevent PHP Warnings for undefined index
+								if ( isset( $_POST['fitcase'][ $field_name ] ) ) {
+									$metadata = $_POST['fitcase'][ $field_name ];
+								} else {
+									$metadata = null;
+								}
+								update_post_meta( $post->ID, $field_name, $metadata );
 							}
 						}
 					}
@@ -446,15 +431,18 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 *
 		 * @return string The custom meta as HTML form element
 		 */
-		function add_meta_field( $field_id_name, $field_type, $meta, $attributes, $select_options, $radio_options,
-			$wpeditor_options ) {
+		function add_meta_field(
+			$field_id_name, $field_type, $meta, $attributes, $select_options,
+			$radio_options,
+			$wpeditor_options
+		) {
 
 			// Initialize Meta Field
 			$meta_field = '';
 
 			// Text Fields
 			if ( $field_type == 'text' ) {
-				$meta_field .= '<input type="' . $field_type . '" name="' . $field_id_name . '" id="' .
+				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' .
 				                $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '" ';
 
 				if ( isset( $attributes ) && ! empty( $attributes ) ) {
@@ -466,11 +454,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Select Elements
 			if ( $field_type == 'select' ) {
-				$meta_field .= '<select>';
+				$meta_field .= '<select name="fitcase[' . $field_id_name . ']" id="' .
+				               $field_id_name . '">';
 
 				foreach ( $select_options as $option ) {
 					$meta_field .= '<option value="' . $option . '" ' . selected( $meta[ $field_id_name ][0],
-							$option ) . ' >' .
+							$option, false ) . ' >' .
 					                 $option . '</option>';
 				}
 
@@ -479,22 +468,27 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Check Boxes
 			if ( $field_type == 'checkbox' ) {
-				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][ 0 ], $field_id_name, false ) . ' />';
+				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][0], $field_id_name, false ) . ' />';
 			}
 
 			// Radio Buttons
 			if ( $field_type == 'radio' ) {
-				foreach ( $radio_options as $radio )
-				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][ 0 ], $radio, false ) . ' />';
+				foreach ( $radio_options as $radio ) {
+					$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][0], $radio, false ) . ' />';
+					$meta_field .= self::add_input_label( $field_id_name, $radio );
+				}
 			}
 
 			// wp_editor() Instance
 			if ( $field_type == 'wpeditor' ) {
 				if ( isset( $meta[ $field_id_name ] ) ) {
-					$editor_content = $meta[ $field_id_name ];
+					$editor_content = $meta[ $field_id_name ][0];
 				} else {
 					$editor_content = '';
 				}
+
+				$wpeditor_options['textarea_name'] = 'fitcase[' . $field_id_name . ']';
+
 				wp_editor( $editor_content, $field_id_name, $wpeditor_options );
 			}
 

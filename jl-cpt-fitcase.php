@@ -32,26 +32,32 @@ $fitcase->add_meta_box(
 	array(
 		'First Name' => array(
 			'type' => 'text',
-			'maxlength' => 64,
+			'attributes' => array(
+				'maxlength' => 16,
+			),
 		),
 		'Last Name'  => array(
 			'type'  => 'text',
-			'maxlength'  => 64,
+			'attributes' => array(
+				'maxlength' => 16,
+			),
 			'break' => true,
 		),
 		'Sex'        => array(
 			'type'    => 'select',
-			'options' => array( 'Male', 'Female', 'Other' ),
+			'select_options' => array( 'Male', 'Female', 'Other' ),
 		),
-		'Age'        => array(
-			'type'  => 'text',
-			'maxlength'  => 1,
-			//'size' => 16,
-			'break' => true,
+		'Age' => array(
+			'type'       => 'text',
+			'attributes' => array(
+				'maxlength' => 3,
+				//'size' => 16,
+			),
+			'break'      => true,
 		),
 		'History' => array(
 			'type'            => 'wpeditor',
-			'editor_settings' => array(
+			'wpeditor_options' => array(
 				'media_buttons' => false,
 				'textarea_rows' => 5,
 			)
@@ -79,32 +85,12 @@ $fitcase->add_meta_box(
 	array(
 		'Radio One' => array(
 			'type' => 'radio',
-			'radio' => array( 'One', 'Two', 'Three', 'Four'),
+			'radio_options' => array( 'One', 'Two', 'Three', 'Four'),
 		),
 	)
 );
 
-$fitcase->add_submenu_page(
-	'Options',
-	array(
-		'Test One' => array(
-			'type' => 'text',
-			'attributes' => array(
-				'maxlength' => 32,
-			),
-		),
-		'Test Two' => array(
-			'type' => 'text',
-			'attributes' => array(
-				'maxlength' => 64,
-			),
-		),
-		'Sex'        => array(
-			'type'    => 'select',
-			'select_options' => array( 'Male', 'Female', 'Other' )
-		)
-	)
-);
+
 
 // Load Custom Admin Styles
 function jl_fitcase_css() {
