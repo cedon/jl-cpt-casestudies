@@ -117,6 +117,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					'supports'          => array( 'title', 'editor' ),
 					'show_in_nav_menus' => true,
 					'_builtin'          => false,
+					'show_in_rest'      => true,
 				),
 
 				// Overrides
