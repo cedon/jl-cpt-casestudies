@@ -288,15 +288,15 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 										// Check for wp_editor() options in field definition
 										if ( isset( $field['wpeditor_options'] ) && ! empty( $field['wpeditor_options'] ) ) {
-											$wpedior_settings = $field['wpeditor_options'];
+											$wpeditor_settings = $field['wpeditor_options'];
 										} else {
-											$wpedior_settings = array();
+											$wpeditor_settings = array();
 										}
 
 										echo self::add_input_label( $field_id_name, $label );
 										echo self::add_meta_field( $field_id_name, $field_type, $meta,
 										$attributes,
-											$select_options, $radio_options, $wpedior_settings );
+											$select_options, $radio_options, $wpeditor_settings );
 
 										if ( isset ( $field['break'] ) && $field['break'] == true ) {
 											echo '<br />';
