@@ -244,6 +244,16 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 				add_action( 'add_meta_boxes',
 					function() use( $box_id, $box_title, $post_type_name, $box_context, $box_priority, $fields ) {
+
+						// Create Callback Arguments Array w/ $fields
+						$callback_args = array( $fields );
+
+						foreach ( $fields as $field ) {
+							if ( in_array( 'wpeditor', $field ) ) {
+								$callback_args['__block_editor_compatible_meta_box'] = false;
+							}
+						}
+
 						add_meta_box(
 							$box_id,
 							$box_title,
@@ -303,11 +313,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 										}
 									}
 								}
+
 							},
 							$post_type_name,
 							$box_context,
 							$box_priority,
-							array( $fields )
+							$callback_args
 						); // add_meta_box()
 
 						// Add dynamic filter using function add_meta_box_class() located in functions.php
