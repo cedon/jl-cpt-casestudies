@@ -248,6 +248,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 						// Create Callback Arguments Array w/ $fields
 						$callback_args = array( $fields );
 
+						// Check for wp_editor() fields and set flag to use classic editor
 						foreach ( $fields as $field ) {
 							if ( in_array( 'wpeditor', $field ) ) {
 								$callback_args['__block_editor_compatible_meta_box'] = false;
@@ -341,8 +342,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 						return;
 					}
 
-					error_log( print_r( $_POST, true) );
-
 					// Abort if the nonce field is not set
 					if ( ! isset( $_POST['jl-fitcase-nonce'] ) ||
 					     ! wp_verify_nonce( $_POST['jl-fitcase-nonce'], JLFITCASE__PLUGIN_FILE ) ) {
@@ -354,15 +353,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					if ( isset( $_POST ) && isset( $post->ID ) && get_post_type( $post->ID ) == $post_type_name ) {
 						global $custom_fields;
 
-						error_log( print_r( $_POST, true) );
 						// Loop through all meta boxes
 						foreach ( $custom_fields as $title => $fields ) {
 
-							//error_log( 'Title: '. $title . PHP_EOL );
-
 							// Loop through all fields in meta box
 							foreach ( $fields as $label => $type ) {
-								// error_log( 'Label: '. $label . PHP_EOL );
 
 								$field_name = self::uglify( $title ) . '_' . self::uglify( $label );
 
