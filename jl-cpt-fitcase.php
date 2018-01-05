@@ -90,6 +90,18 @@ $fitcase->add_meta_box(
 	)
 );
 
+$fitcase->add_meta_box(
+	'Testing Text Areas',
+	array(
+		'Text Area' => array(
+			'type' => 'textarea',
+			'attributes' => array(
+				'rows' => 5,
+				'cols' => 80,
+			),
+		),
+	)
+);
 
 
 // Load Custom Admin Styles
