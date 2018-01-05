@@ -81,7 +81,7 @@ $fitcase->add_meta_box(
 );
 
 $fitcase->add_meta_box(
-	'Testing Rdio Buttons',
+	'Testing Radio Buttons',
 	array(
 		'Radio One' => array(
 			'type' => 'radio',
@@ -93,7 +93,14 @@ $fitcase->add_meta_box(
 $fitcase->add_meta_box(
 	'Testing Text Areas',
 	array(
-		'Text Area' => array(
+		'Text Area One' => array(
+			'type' => 'textarea',
+			'attributes' => array(
+				'rows' => 5,
+				'cols' => 80,
+			),
+		),
+		'Text Area Two' => array(
 			'type' => 'textarea',
 			'attributes' => array(
 				'rows' => 5,

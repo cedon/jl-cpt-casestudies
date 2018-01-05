@@ -1,11 +1,38 @@
+div.postbox.jl-fitcase-meta h2.hndle.ui-sortable-handle {
+  margin-bottom: 1em; }
+div.postbox.jl-fitcase-meta div[class*=jlfitcase-meta] {
+  display: inline-block; }
 div.postbox.jl-fitcase-meta input, div.postbox.jl-fitcase-meta label {
   margin-bottom: .5em;
   display: inline-block; }
+div.postbox.jl-fitcase-meta input, div.postbox.jl-fitcase-meta select {
+  margin-right: 1em; }
+div.postbox.jl-fitcase-meta input[type="checkbox"],
+div.postbox.jl-fitcase-meta input[type="radio"] {
+  vertical-align: middle; }
 div.postbox.jl-fitcase-meta label {
-  margin-right: 1em;
+  margin-right: .5em;
   margin-left: 1em; }
 div.postbox.jl-fitcase-meta label:first-of-type,
 div.postbox.jl-fitcase-meta br ~ label {
   margin-left: 0; }
+div.postbox.jl-fitcase-meta .jlfitcase-meta-radio label {
+  margin-left: .25em;
+  margin-right: .5em; }
+div.postbox.jl-fitcase-meta .jlfitcase-meta-radio > label:first-of-type {
+  margin-right: .5em; }
+div.postbox.jl-fitcase-meta .jlfitcase-meta-radio input {
+  margin-right: 0; }
+div.postbox.jl-fitcase-meta div.jlfitcase-meta-textarea {
+  display: block; }
+  div.postbox.jl-fitcase-meta div.jlfitcase-meta-textarea label, div.postbox.jl-fitcase-meta div.jlfitcase-meta-textarea textarea {
+    display: block;
+    clear: both; }
+  div.postbox.jl-fitcase-meta div.jlfitcase-meta-textarea textarea {
+    margin-bottom: 1em; }
+div.postbox.jl-fitcase-meta .jlfitcase-meta-wpeditor label {
+  position: absolute;
+  font-weight: 700;
+  padding-top: 1em; }
 
 /*# sourceMappingURL=jl-fitcase-admin.css.map */

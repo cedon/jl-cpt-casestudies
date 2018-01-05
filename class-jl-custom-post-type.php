@@ -304,10 +304,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 											$wpeditor_settings = array();
 										}
 
+										echo '<div class="jlfitcase-meta-' . $field_type . '">';
 										echo self::add_input_label( $field_id_name, $label );
 										echo self::add_meta_field( $field_id_name, $field_type, $meta,
 										$attributes,
 											$select_options, $radio_options, $wpeditor_settings );
+										echo '</div>';
 
 										if ( isset ( $field['break'] ) && $field['break'] == true ) {
 											echo '<br />';

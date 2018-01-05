@@ -1,12 +1,29 @@
 div.postbox.jl-fitcase-meta {
 
+  h2.hndle.ui-sortable-handle {
+    margin-bottom: 1em;
+  }
+
+  div[class*=jlfitcase-meta] {
+    display: inline-block;
+  }
+
   input, label {
     margin-bottom: .5em;
     display: inline-block;
   }
 
-  label {
+  input, select {
     margin-right: 1em;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    vertical-align: middle;
+  }
+
+  label {
+    margin-right: .5em;
     margin-left: 1em;
   }
 
@@ -14,4 +31,43 @@ div.postbox.jl-fitcase-meta {
   br ~ label {
       margin-left: 0;
   }
+
+  .jlfitcase-meta-radio {
+    label {
+      margin-left: .25em;
+      margin-right: .5em;
+    }
+
+    > label:first-of-type {
+      margin-right: .5em;
+    }
+
+    input {
+      margin-right: 0;
+    }
+  }
+
+  div.jlfitcase-meta-textarea {
+
+    display: block;
+
+    label, textarea {
+      display: block;
+      clear: both;
+    }
+
+    textarea {
+      margin-bottom: 1em;
+    }
+  }
+
+  .jlfitcase-meta-wpeditor {
+
+    label {
+      position: absolute;
+      font-weight: 700;
+      padding-top: 1em;
+    }
+  }
+
 }
