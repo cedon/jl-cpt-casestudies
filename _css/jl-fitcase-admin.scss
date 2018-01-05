@@ -1,0 +1,17 @@
+div.postbox.jl-fitcase-meta {
+
+  input, label {
+    margin-bottom: .5em;
+    display: inline-block;
+  }
+
+  label {
+    margin-right: 1em;
+    margin-left: 1em;
+  }
+
+  label:first-of-type,
+  br ~ label {
+      margin-left: 0;
+  }
+}

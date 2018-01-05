@@ -1,3 +1,11 @@
-div.postbox.jl-fitcase-meta {
-    background-color: aqua;
-}
+div.postbox.jl-fitcase-meta input, div.postbox.jl-fitcase-meta label {
+  margin-bottom: .5em;
+  display: inline-block; }
+div.postbox.jl-fitcase-meta label {
+  margin-right: 1em;
+  margin-left: 1em; }
+div.postbox.jl-fitcase-meta label:first-of-type,
+div.postbox.jl-fitcase-meta br ~ label {
+  margin-left: 0; }
+
+/*# sourceMappingURL=jl-fitcase-admin.css.map */
