@@ -341,8 +341,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 						return;
 					}
 
+					error_log( print_r( $_POST, true) );
+
 					// Abort if the nonce field is not set
-					if ( ! wp_verify_nonce( $_POST['jl-fitcase-nonce'], JLFITCASE__PLUGIN_FILE ) ) {
+					if ( ! isset( $_POST['jl-fitcase-nonce'] ) ||
+					     ! wp_verify_nonce( $_POST['jl-fitcase-nonce'], JLFITCASE__PLUGIN_FILE ) ) {
 						return;
 					}
 
@@ -369,7 +372,10 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								} else {
 									$metadata = null;
 								}
-								update_post_meta( $post->ID, $field_name, $metadata );
+
+								if ( $metadata != null ) {
+									update_post_meta( $post->ID, $field_name, $metadata );
+								}
 							}
 						}
 					}
@@ -451,6 +457,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Initialize Meta Field
 			$meta_field = '';
+
+			// Check for meta data for value attribute and set to null if not found
+			if ( ! isset( $meta[ $field_id_name ] ) ) {
+				$meta[ $field_id_name ][0] = null;
+			}
 
 			// Text Fields
 			if ( $field_type == 'text' ) {
