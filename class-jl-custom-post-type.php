@@ -408,7 +408,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			$input_attributes = '';
 
 			// Arrays for validation
-			$num_attribs  = array( 'maxlength', 'min', 'size' );
+			$num_attribs  = array( 'maxlength', 'min', 'size', 'rows', 'cols' );
 			$bool_attribs = array( 'required' );
 
 			foreach ( $attributes as $attribute => $value ) {
@@ -418,7 +418,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				if ( in_array( $attribute, $num_attribs ) and is_int( $value ) ) {
 					$input_attributes .= $attribute . '="' . $value . '" ';
 				} elseif ( in_array( $attribute, $bool_attribs ) and is_bool( $value ) ) {
-					$eval            = ( $value ) ? 'true' : 'false';
+					$eval              = ( $value ) ? 'true' : 'false';
 					$input_attributes .= $attribute . '="' . $eval . '" ';
 				}
 			}
@@ -489,6 +489,23 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][0], $radio, false ) . ' />';
 					$meta_field .= self::add_input_label( $field_id_name, $radio );
 				}
+			}
+
+			// Text Area
+			if ( $field_type == 'textarea' ) {
+				$meta_field .= '<textarea name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" ';
+
+				if ( isset( $attributes ) && ! empty( $attributes ) ) {
+					$meta_field .= self::input_attributes( $attributes );
+				}
+
+				$meta_field .= ' />';
+
+				if ( isset( $meta[ $field_id_name ] ) ) {
+					$meta_field .=  $meta[ $field_id_name ][0];
+				}
+
+				$meta_field .= '</textarea>';
 			}
 
 			// wp_editor() Instance
