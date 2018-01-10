@@ -17,6 +17,7 @@ define( 'JLFITCASE__PLUGIN_FILE', __FILE__ );
 
 require_once ( JLFITCASE__PLUGIN_DIR . '_inc/functions.php');
 require_once ( JLFITCASE__PLUGIN_DIR . 'class-jl-custom-post-type.php' );
+require_once ( JLFITCASE__PLUGIN_DIR . 'class-jl-admin-options.php' );
 
 function jl_fitcase_flush_rewrite() {
 	flush_rewrite_rules();
