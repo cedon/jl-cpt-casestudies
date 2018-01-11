@@ -16,28 +16,60 @@ if ( ! class_exists( 'JL_CustomAdminOptions' ) ) {
 	class JL_CustomAdminOptions {
 
 		/**
-		 * The name of the menu that will be used within the page's title element
+		 * The name of the menu
 		 *
 		 * @since 1.0.0
 		 * @access public
 		 * @var string
 		 */
-		public $admin_page_title;
+		public $admin_menu_name;
 
 		/**
-		 * The name of the menu that will appear in the admin menu
+		 * Arguments for creation of the admin menu page
 		 *
 		 * @since 1.0.0
 		 * @access public
-		 * @var string
+		 * @var array
 		 */
-		public $admin_menu_title;
+		public $admin_menu_args;
 
-		public function __construct( $title, $menu ) {
+		/**
+		 * Constructor
+		 *
+		 * @param string $name The name of the menu
+		 * @param array $args (optional) Arguments for creation of the menu page
+		 * @param bool $submenu (optional) Flag for submenu creation versus main admin page
+		 */
+		public function __construct( $name, $args = array(), $submenu = false ) {
 
 			// Set Variables
-			$this->admin_page_title = self::beautify( $title );
-			$this->admin_menu_title = self::beautify( $menu );
+			$this->admin_menu_name = self::beautify( $name );
+			$this->admin_menu_args = $args;
+
+			$args = array_merge(
+
+				// Default Values
+				array(
+					'page_title'  => $this->admin_menu_name,
+					'menu_title'  => '',
+					'capability'  => 'administrator',
+					'menu_slug'   => self::uglify( $this->admin_menu_name ),
+					'icon_url'    => '',
+					'position'    => 5,
+					'parent_slug' => '',
+				),
+
+				// Add in user overrides
+				$this->admin_menu_args
+			);
+
+			if ( $submenu === false ) {
+
+			} elseif ( $submenu === true ) {
+
+			} else {
+				// Trap the Error
+			}
 		}
 
 
