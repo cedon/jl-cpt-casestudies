@@ -11,7 +11,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 	/**
 	 * The JL Custom Post Type Generator Class
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	class JL_CustomPostType {
 
@@ -19,7 +19,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 *
 		 * Name of Custom Post Type set by the user
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 * @var string
 		 */
@@ -28,7 +28,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Arguments for custom post type registration
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 * @var array
 		 */
@@ -37,7 +37,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Labels for custom post type
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 * @var array
 		 */
@@ -46,7 +46,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Constructor
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 *
 		 * @param string $name Name of the custom post type
@@ -72,7 +72,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Register post type method
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 */
 		public function register_post_type() {
@@ -132,7 +132,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Register taxonomy method
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 *
 		 * @param string $name Name of the custom taxonomy
@@ -217,7 +217,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Attaches meta boxes to the post type
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 *
 		 * @param string $title Title of meta box
@@ -536,7 +536,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Changes a string like 'my_string' to 'My String' for display purposes
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 *
 		 * @param string $string The string of text to beautify
@@ -550,7 +550,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Changes a string like 'My String' to 'my_string' for display purposes
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 *
 		 * @param string $string The string of text to uglify
@@ -564,7 +564,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		/**
 		 * Converts a provided word into its plural form
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 * @access public
 		 *
 		 * @param string $string The word to be pluralized
