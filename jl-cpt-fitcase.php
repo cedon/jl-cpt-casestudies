@@ -66,49 +66,25 @@ $fitcase->add_meta_box(
 ); // Client Info
 
 $fitcase->add_meta_box(
-	'Testing Checkboxes',
+	'Before/After Photos',
 	array(
-		'Checkbox One' => array(
-			'type' => 'checkbox',
-		),
-		'Checkbox Two' => array(
-			'type' => 'checkbox',
-		),
-		'Checkbox Three' => array(
-			'type' => 'checkbox',
-		),
-	)
-);
-
-$fitcase->add_meta_box(
-	'Testing Radio Buttons',
-	array(
-		'Radio One' => array(
-			'type' => 'radio',
-			'radio_options' => array( 'One', 'Two', 'Three', 'Four'),
-		),
-	)
-);
-
-$fitcase->add_meta_box(
-	'Testing Text Areas',
-	array(
-		'Text Area One' => array(
-			'type' => 'textarea',
-			'attributes' => array(
-				'rows' => 5,
-				'cols' => 80,
+		'Before Photo' => array(
+			'type' => 'attachment',
+			'mimes' => array(
+				'image/jpeg',
+				'image/png',
 			),
 		),
-		'Text Area Two' => array(
-			'type' => 'textarea',
-			'attributes' => array(
-				'rows' => 5,
-				'cols' => 80,
-			),
+		'Current Photo' => array(
+				'type' => 'attachment',
+				'mimes' => array(
+					'image/jpeg',
+					'image/png',
+				),
 		),
-	)
-);
+	),
+	'side'
+); // Client Before/After Photos
 
 
 // Load Custom Admin Styles

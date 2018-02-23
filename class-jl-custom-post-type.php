@@ -529,6 +529,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				wp_editor( $editor_content, $field_id_name, $wpeditor_options );
 			}
 
+			// File Upload Field
+			if ( $field_type == 'attachment' ) {
+				$meta_field .= '<input type="file" name="fitcase[ ' . $field_id_name . ']" id=="fitcase[ ' .
+				               $field_id_name . ']" value="' . $meta[ $field_id_name ][0] . '" size="25">';
+			}
+
 			// Return Completed Meta Field
 			return $meta_field;
 		}
