@@ -363,6 +363,16 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 								$field_name = self::uglify( $title ) . '_' . self::uglify( $label );
 
+								error_log( '=== $_POST ===' . PHP_EOL );
+								error_log( print_r( $_POST, true) );
+
+								error_log( '=== $_FILES ===' . PHP_EOL );
+								error_log( print_r( $_FILES, true) );
+
+								if ( ! empty( $_FILES['']['name'] ) ) {
+									error_log( 'The File is Here!');
+								}
+
 								// Prevent PHP Warnings for undefined index
 								if ( isset( $_POST['fitcase'][ $field_name ] ) ) {
 									$metadata = $_POST['fitcase'][ $field_name ];

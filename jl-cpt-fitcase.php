@@ -66,7 +66,7 @@ $fitcase->add_meta_box(
 ); // Client Info
 
 $fitcase->add_meta_box(
-	'Before/After Photos',
+	'Client Photos',
 	array(
 		'Before Photo' => array(
 			'type' => 'attachment',
@@ -94,5 +94,6 @@ function jl_fitcase_css() {
 		return;
 	}
 	wp_enqueue_style( 'jlfitcase-admin-style', plugins_url( '_css/jl-fitcase-admin.css', __FILE__ ) );
+	wp_enqueue_script( 'jlfitcase-admin-script', plugins_url( '_js/jl-cpt-fitcase-admin.js', __FILE__ ) );
 }
 add_action( 'admin_enqueue_scripts', 'jl_fitcase_css' );
