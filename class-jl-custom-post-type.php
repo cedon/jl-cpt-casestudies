@@ -493,6 +493,9 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			$wpeditor_options
 		) {
 
+			// Set key
+			$post_key = $this->post_type_key;
+
 			// Initialize Meta Field
 			$meta_field = '';
 
@@ -503,7 +506,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Text Fields
 			if ( $field_type == 'text' ) {
-				$meta_field .= '<input type="' . $field_type . '" name="'. $this->post_type_key[$field_id_name ] . '" id="' .
+				$meta_field .= '<input type="' . $field_type . '" name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' .
 				                $field_id_name . '" value="' . $meta[$field_id_name][0] . '" ';
 
 				if ( isset( $attributes ) && ! empty( $attributes ) ) {
@@ -515,7 +518,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Select Elements
 			if ( $field_type == 'select' ) {
-				$meta_field .= '<select name="'. $this->post_type_key[$field_id_name] . '" id="' .
+				$meta_field .= '<select name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' .
 				               $field_id_name . '">';
 
 				foreach ( $select_options as $option ) {
@@ -529,20 +532,20 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Check Boxes
 			if ( $field_type == 'checkbox' ) {
-				$meta_field .= '<input type="' . $field_type . '" name="'. $this->post_type_key[$field_id_name] . '" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][0], $field_id_name, false ) . ' />';
+				$meta_field .= '<input type="' . $field_type . '" name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][0], $field_id_name, false ) . ' />';
 			}
 
 			// Radio Buttons
 			if ( $field_type == 'radio' ) {
 				foreach ( $radio_options as $radio ) {
-					$meta_field .= '<input type="' . $field_type . '" name="'. $this->post_type_key[$field_id_name] . '" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][0], $radio, false ) . ' />';
+					$meta_field .= '<input type="' . $field_type . '" name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][0], $radio, false ) . ' />';
 					$meta_field .= self::add_input_label( $field_id_name, $radio );
 				}
 			}
 
 			// Text Area
 			if ( $field_type == 'textarea' ) {
-				$meta_field .= '<textarea name="'. $this->post_type_key[$field_id_name] . '" id="' . $field_id_name . '" ';
+				$meta_field .= '<textarea name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' . $field_id_name . '" ';
 
 				if ( isset( $attributes ) && ! empty( $attributes ) ) {
 					$meta_field .= self::input_attributes( $attributes );
@@ -565,14 +568,14 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					$editor_content = '';
 				}
 
-				$wpeditor_options['textarea_name'] = $this->post_type_key[$field_id_name];
+				$wpeditor_options['textarea_name'] = "{$this->post_type_key}" . '[' . $field_id_name . ']';
 
 				wp_editor( $editor_content, $field_id_name, $wpeditor_options );
 			}
 
 			// File Upload Field
 			if ( $field_type == 'attachment' ) {
-				$meta_field .= '<input type="file" name="'. $this->post_type_key[$field_id_name] . '" id="' .
+				$meta_field .= '<input type="file" name="' . "{$post_key}" . '[' . $field_id_name . ']" id="' .
 				               $field_id_name . '" value="' . $meta[$field_id_name][0] . '" size="25">';
 			}
 
