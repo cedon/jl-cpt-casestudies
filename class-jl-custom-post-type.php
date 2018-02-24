@@ -270,6 +270,9 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
 
+								error_log( '=== $meta ===' );
+								error_log( print_r( $meta, true ) );
+
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
 									foreach ( $custom_fields as $label => $field ) {
@@ -339,6 +342,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			add_action( 'save_post',
 				function () use ( $post_type_name ) {
 
+					error_log( '=== $_POST ===' . PHP_EOL );
+					error_log( print_r( $_POST, true) );
+
+					error_log( '=== $_FILES ===' . PHP_EOL );
+					error_log( print_r( $_FILES, true) );
+
 					// Do not autosave meta box data
 					if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 						return;
@@ -362,12 +371,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							foreach ( $fields as $label => $type ) {
 
 								$field_name = self::uglify( $title ) . '_' . self::uglify( $label );
-
-								error_log( '=== $_POST ===' . PHP_EOL );
-								error_log( print_r( $_POST, true) );
-
-								error_log( '=== $_FILES ===' . PHP_EOL );
-								error_log( print_r( $_FILES, true) );
 
 								if ( ! empty( $_FILES['']['name'] ) ) {
 									error_log( 'The File is Here!');
