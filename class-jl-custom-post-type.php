@@ -26,6 +26,17 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		public $post_type_name;
 
 		/**
+		 *
+		 * Optional key used for custom post type. This will be used to preface names, IDs, etc. Will default to a
+		 * eight character truncation of $post_type_name but can be set using the set_post_key() method.
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 * @var string
+		 */
+		public $post_type_key;
+
+		/**
 		 * Arguments for custom post type registration
 		 *
 		 * @since 1.0.0
@@ -57,6 +68,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Set Variables
 			$this->post_type_name      = self::uglify( $name );
+			$this->post_type_key       = substr( preg_replace( "/[^a-z]+/", "", self::uglify( $name ) ), 0, 8 );
 			$this->post_type_args      = $args;
 			$this->post_type_labels    = $labels;
 
@@ -262,7 +274,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								global $post;
 
 								// Nonce Field for Validation
-								wp_nonce_field( JLFITCASE__PLUGIN_FILE, 'jl-fitcase-nonce' );
+								$nonce_field = $this->post_type_key . '-nonce';
+								wp_nonce_field( JLFITCASE__PLUGIN_FILE, $nonce_field );
 
 								// Get Inputs from $data
 								$custom_fields = $data['args'][0];
@@ -270,8 +283,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
 
-								error_log( '=== $meta ===' );
-								error_log( print_r( $meta, true ) );
+								//error_log( '=== $meta ===' );
+								//error_log( print_r( $meta, true ) );
 
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
@@ -342,8 +355,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			add_action( 'save_post',
 				function () use ( $post_type_name ) {
 
-					error_log( '=== $_POST ===' . PHP_EOL );
-					error_log( print_r( $_POST, true) );
+					//error_log( '=== $_POST ===' . PHP_EOL );
+					//error_log( print_r( $_POST, true) );
 
 					error_log( '=== $_FILES ===' . PHP_EOL );
 					error_log( print_r( $_FILES, true) );
@@ -354,8 +367,10 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					}
 
 					// Abort if the nonce field is not set
-					if ( ! isset( $_POST['jl-fitcase-nonce'] ) ||
-					     ! wp_verify_nonce( $_POST['jl-fitcase-nonce'], JLFITCASE__PLUGIN_FILE ) ) {
+					$nonce_field = $this->post_type_key . '-nonce';
+					if ( ! isset( $_POST[$nonce_field] ) ||
+					     ! wp_verify_nonce( $_POST[$nonce_field], JLFITCASE__PLUGIN_FILE ) ) {
+						error_log( 'NONCE FAILED!' );
 						return;
 					}
 
@@ -372,13 +387,13 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 								$field_name = self::uglify( $title ) . '_' . self::uglify( $label );
 
-								if ( ! empty( $_FILES['']['name'] ) ) {
-									error_log( 'The File is Here!');
+								if ( ! empty( $_FILES[$this->post_type_key]['name'][$field_name] ) ) {
+									error_log( '*** The File is Here! ***');
 								}
 
 								// Prevent PHP Warnings for undefined index
-								if ( isset( $_POST['fitcase'][ $field_name ] ) ) {
-									$metadata = $_POST['fitcase'][ $field_name ];
+								if ( isset( $_POST[$this->post_type_key][ $field_name ] ) ) {
+									$metadata = $_POST[$this->post_type_key][ $field_name ];
 								} else {
 									$metadata = null;
 								}
@@ -392,6 +407,19 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				}
 			);
 
+		}
+
+		/** Redefine post_type_key
+		 * Redefines $this->post_type_key with user-selected override
+		 *
+		 * @since 1.0.0.
+		 * @access public
+		 *
+		 * @param $key (string) The key the user wishes to use as an override
+		 */
+		public function set_post_key( $key ) {
+			$newkey = preg_replace( "/[^a-z]+/", "", self::uglify( $key ) );
+			$this->post_type_key = $newkey;
 		}
 
 		/**
@@ -469,14 +497,14 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			$meta_field = '';
 
 			// Check for meta data for value attribute and set to null if not found
-			if ( ! isset( $meta[ $field_id_name ] ) ) {
-				$meta[ $field_id_name ][0] = null;
+			if ( ! isset( $meta[$field_id_name] ) ) {
+				$meta[$field_id_name][0] = null;
 			}
 
 			// Text Fields
 			if ( $field_type == 'text' ) {
-				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' .
-				                $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '" ';
+				$meta_field .= '<input type="' . $field_type . '" name="'. $this->post_type_key[$field_id_name ] . '" id="' .
+				                $field_id_name . '" value="' . $meta[$field_id_name][0] . '" ';
 
 				if ( isset( $attributes ) && ! empty( $attributes ) ) {
 					$meta_field .= self::input_attributes( $attributes );
@@ -487,11 +515,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Select Elements
 			if ( $field_type == 'select' ) {
-				$meta_field .= '<select name="fitcase[' . $field_id_name . ']" id="' .
+				$meta_field .= '<select name="'. $this->post_type_key[$field_id_name] . '" id="' .
 				               $field_id_name . '">';
 
 				foreach ( $select_options as $option ) {
-					$meta_field .= '<option value="' . $option . '" ' . selected( $meta[ $field_id_name ][0],
+					$meta_field .= '<option value="' . $option . '" ' . selected( $meta[$field_id_name][0],
 							$option, false ) . ' >' .
 					                 $option . '</option>';
 				}
@@ -501,20 +529,20 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Check Boxes
 			if ( $field_type == 'checkbox' ) {
-				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][0], $field_id_name, false ) . ' />';
+				$meta_field .= '<input type="' . $field_type . '" name="'. $this->post_type_key[$field_id_name] . '" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][0], $field_id_name, false ) . ' />';
 			}
 
 			// Radio Buttons
 			if ( $field_type == 'radio' ) {
 				foreach ( $radio_options as $radio ) {
-					$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][0], $radio, false ) . ' />';
+					$meta_field .= '<input type="' . $field_type . '" name="'. $this->post_type_key[$field_id_name] . '" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][0], $radio, false ) . ' />';
 					$meta_field .= self::add_input_label( $field_id_name, $radio );
 				}
 			}
 
 			// Text Area
 			if ( $field_type == 'textarea' ) {
-				$meta_field .= '<textarea name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" ';
+				$meta_field .= '<textarea name="'. $this->post_type_key[$field_id_name] . '" id="' . $field_id_name . '" ';
 
 				if ( isset( $attributes ) && ! empty( $attributes ) ) {
 					$meta_field .= self::input_attributes( $attributes );
@@ -537,15 +565,15 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					$editor_content = '';
 				}
 
-				$wpeditor_options['textarea_name'] = 'fitcase[' . $field_id_name . ']';
+				$wpeditor_options['textarea_name'] = $this->post_type_key[$field_id_name];
 
 				wp_editor( $editor_content, $field_id_name, $wpeditor_options );
 			}
 
 			// File Upload Field
 			if ( $field_type == 'attachment' ) {
-				$meta_field .= '<input type="file" name="fitcase[ ' . $field_id_name . ']" id=="fitcase[ ' .
-				               $field_id_name . ']" value="' . $meta[ $field_id_name ][0] . '" size="25">';
+				$meta_field .= '<input type="file" name="'. $this->post_type_key[$field_id_name] . '" id="' .
+				               $field_id_name . '" value="' . $meta[$field_id_name][0] . '" size="25">';
 			}
 
 			// Return Completed Meta Field

@@ -25,6 +25,7 @@ register_activation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
 register_deactivation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
 
 $fitcase = new JL_CustomPostType( 'Case Study' );
+$fitcase->set_post_key( 'fitcase' );
 $fitcase->add_taxonomy( 'Fitness Goal', array( 'hierarchical' => true ) );
 
 $fitcase->add_meta_box(
@@ -85,7 +86,6 @@ $fitcase->add_meta_box(
 	),
 	'side'
 ); // Client Before/After Photos
-
 
 // Load Custom Admin Styles
 function jl_fitcase_css() {
