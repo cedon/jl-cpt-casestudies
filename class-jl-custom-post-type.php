@@ -400,12 +400,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									$override['action'] = 'editpost';
 
 									$file_name = $_FILES[$field_name]['name'];
-									error_log( 'FILE NAME IS: ' . $file_name );
-
 									$attachment_file = wp_handle_upload( $_FILES[$field_name], $override );
-
-									error_log( '$attachment_file: ' . print_r( $attachment_file, true ) );
-
 									$post_id = $post->ID;
 
 									$attachment = array(
@@ -417,19 +412,19 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 										'guid'           => $attachment_file['url'],
 									);
 
+									// Check if file is a JPEG or PNG and require wp-admin/includes/image.php
 									if ( $_FILES[$field_name]['type'] == 'image/jpeg' || $_FILES[$field_name]['type']
 									                                                     == 'image/png' ) {
 										require_once( ABSPATH . 'wp-admin/includes/image.php' );
-										$image_info = getimagesize( $attachment_file['file'] );
-										error_log( print_r( $image_info, true ) );
 									}
 
-									$id = wp_insert_attachment( $attachment, $attachment_file['url'], $post_id );
+									$id = wp_insert_attachment( $attachment, $attachment_file['file'], $post_id );
 									wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id,
-										$attachment_file['url'] ) );
+										$attachment_file['file'] ) );
 									$attachment_meta = wp_get_attachment_metadata( $id );
 									error_log( 'META: ' . print_r( $attachment_meta, true ) );
 
+									// Set metadata value to save to database
 									$metadata = $attachment_file['url'];								}
 
 								if ( $metadata != null ) {
@@ -610,7 +605,17 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			// File Upload Field
 			if ( $field_type == 'attachment' ) {
 				$meta_field .= '<input type="file" name="' . $field_id_name . '" id="' .
-				               $field_id_name . '" value="' . $field_id_name[0] . '" size="25">';
+				               $field_id_name . '" value="' . $meta[$field_id_name][0] . '" size="25">';
+
+				if ( isset( $meta[$field_id_name][0] ) ) {
+					$attachment_id = attachment_url_to_postid( $meta[$field_id_name][0] );
+					$upload_meta = wp_get_attachment_metadata( $attachment_id );
+
+					if ( isset( $upload_meta['image_meta'] ) ) {
+						$meta_field .= '<br /> <img src="' . $meta[$field_id_name][0] . '" width="' . $upload_meta['width'] . '" height="' . $upload_meta['height'] .
+						     '">';
+					}
+				}
 			}
 
 			// Return Completed Meta Field
