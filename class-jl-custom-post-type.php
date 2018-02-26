@@ -358,8 +358,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 //					error_log( '=== $_POST ===');
 //					error_log( print_r( $_POST, true) );
 //
-//					error_log( '=== $_FILES ===');
-//					error_log( print_r( $_FILES, true) );
+					error_log( '=== $_FILES ===');
+					error_log( print_r( $_FILES, true) );
 
 					// Do not autosave meta box data
 					if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -407,6 +407,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									error_log( '$attachment_file: ' . print_r( $attachment_file, true ) );
 
 									$post_id = $post->ID;
+
 									$attachment = array(
 										'post_title'     => $file_name,
 										'post_content'   => '',
@@ -416,14 +417,20 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 										'guid'           => $attachment_file['url'],
 									);
 
-									//$id = wp_insert_attachment( $attachment,
-									//	$_FILES['name'], $post_id );
-									//wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id,
-									//	$_FILES[$this->post_type_key]['name'][$field_name] ) );
+									if ( $_FILES[$field_name]['type'] == 'image/jpeg' || $_FILES[$field_name]['type']
+									                                                     == 'image/png' ) {
+										require_once( ABSPATH . 'wp-admin/includes/image.php' );
+										$image_info = getimagesize( $attachment_file['file'] );
+										error_log( print_r( $image_info, true ) );
+									}
 
-									error_log( '$attachment_file[\'url\'] is: '. $attachment_file['url'] );
-									//$metadata = $attachment_file['url'];
-								}
+									$id = wp_insert_attachment( $attachment, $attachment_file['url'], $post_id );
+									wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id,
+										$attachment_file['url'] ) );
+									$attachment_meta = wp_get_attachment_metadata( $id );
+									error_log( 'META: ' . print_r( $attachment_meta, true ) );
+
+									$metadata = $attachment_file['url'];								}
 
 								if ( $metadata != null ) {
 									update_post_meta( $post->ID, $field_name, $metadata );
