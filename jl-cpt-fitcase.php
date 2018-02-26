@@ -83,8 +83,7 @@ $fitcase->add_meta_box(
 					'image/png',
 				),
 		),
-	),
-	'side'
+	)
 ); // Client Before/After Photos
 
 // Load Custom Admin Styles

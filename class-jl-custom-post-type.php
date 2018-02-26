@@ -355,11 +355,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			add_action( 'save_post',
 				function () use ( $post_type_name ) {
 
-					//error_log( '=== $_POST ===' . PHP_EOL );
-					//error_log( print_r( $_POST, true) );
-
-					error_log( '=== $_FILES ===' . PHP_EOL );
-					error_log( print_r( $_FILES, true) );
+//					error_log( '=== $_POST ===');
+//					error_log( print_r( $_POST, true) );
+//
+//					error_log( '=== $_FILES ===');
+//					error_log( print_r( $_FILES, true) );
 
 					// Do not autosave meta box data
 					if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -370,7 +370,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					$nonce_field = $this->post_type_key . '-nonce';
 					if ( ! isset( $_POST[$nonce_field] ) ||
 					     ! wp_verify_nonce( $_POST[$nonce_field], JLFITCASE__PLUGIN_FILE ) ) {
-						error_log( 'NONCE FAILED!' );
 						return;
 					}
 
@@ -387,15 +386,43 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 								$field_name = self::uglify( $title ) . '_' . self::uglify( $label );
 
-								if ( ! empty( $_FILES[$this->post_type_key]['name'][$field_name] ) ) {
-									error_log( '*** The File is Here! ***');
-								}
-
 								// Prevent PHP Warnings for undefined index
 								if ( isset( $_POST[$this->post_type_key][ $field_name ] ) ) {
 									$metadata = $_POST[$this->post_type_key][ $field_name ];
 								} else {
 									$metadata = null;
+								}
+
+								if ( ! empty( $_FILES[$field_name]['name'] ) ) {
+									//$meta = get_post_custom( $post->ID );
+									//error_log ('=== META ===' . print_r( $meta, true ) );
+									require_once( ABSPATH . 'wp-admin/includes/file.php' );
+									$override['action'] = 'editpost';
+
+									$file_name = $_FILES[$field_name]['name'];
+									error_log( 'FILE NAME IS: ' . $file_name );
+
+									$attachment_file = wp_handle_upload( $_FILES[$field_name], $override );
+
+									error_log( '$attachment_file: ' . print_r( $attachment_file, true ) );
+
+									$post_id = $post->ID;
+									$attachment = array(
+										'post_title'     => $file_name,
+										'post_content'   => '',
+										'post_type'      => 'attachment',
+										'post_parent'    => $post_id,
+										'post_mime_type' => $_FILES[$field_name]['type'],
+										'guid'           => $attachment_file['url'],
+									);
+
+									//$id = wp_insert_attachment( $attachment,
+									//	$_FILES['name'], $post_id );
+									//wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id,
+									//	$_FILES[$this->post_type_key]['name'][$field_name] ) );
+
+									error_log( '$attachment_file[\'url\'] is: '. $attachment_file['url'] );
+									//$metadata = $attachment_file['url'];
 								}
 
 								if ( $metadata != null ) {
@@ -575,8 +602,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// File Upload Field
 			if ( $field_type == 'attachment' ) {
-				$meta_field .= '<input type="file" name="' . "{$post_key}" . '[' . $field_id_name . ']" id="' .
-				               $field_id_name . '" value="' . $meta[$field_id_name][0] . '" size="25">';
+				$meta_field .= '<input type="file" name="' . $field_id_name . '" id="' .
+				               $field_id_name . '" value="' . $field_id_name[0] . '" size="25">';
 			}
 
 			// Return Completed Meta Field
