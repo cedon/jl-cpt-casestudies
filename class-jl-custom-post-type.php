@@ -612,7 +612,18 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					$upload_meta = wp_get_attachment_metadata( $attachment_id );
 
 					if ( isset( $upload_meta['image_meta'] ) ) {
-						$meta_field .= '<br /> <img src="' . $meta[$field_id_name][0] . '" width="' . $upload_meta['width'] . '" height="' . $upload_meta['height'] .
+						$img_max_width = 300;
+						if ( $upload_meta['width'] > $img_max_width ) {
+							$img_ratio = $upload_meta['width'] / $img_max_width;
+							$img_width = $img_max_width;
+							$img_height = $upload_meta['height'] / $img_ratio;
+						} else {
+							$upload_meta['width'];
+							$img_height = $upload_meta['height'];
+						}
+
+
+						$meta_field .= '<br /> <img src="' . $meta[$field_id_name][0] . '" width="' . $img_width . '" height="' . $img_height .
 						     '">';
 					}
 				}
