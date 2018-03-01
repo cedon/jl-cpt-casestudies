@@ -6,6 +6,8 @@ JL CPT Fitness Case Study is a WordPress plugin the creates a Case Study custom 
 
 This plugin is is based on the custom post type helper class described by Gils Jorissen in the [Custom Post Type Helper Class](https://code.tutsplus.com/articles/custom-post-type-helper-class--wp-25104) and then modified to accept a different configuration of parameters to define meta box fields.
 
+Note: This plugin is not 100% compatible with the upcoming [Gutenberg](https://github.com/WordPress/gutenberg) editor. While a lot of it will work, instances of `wp_editor()` for meta fields will automatically force WordPress to fall back to the Classic Editor to avoid issues. Full Gutenberg compatibility is a goal of a later version of this project.
+
 ## Class Use
 This plugin is dependant on the `jl-custom-post-type` class that allows users to create a custom post type, custom taxonomy, and meta boxes. It contains several default values for labels and arguments that can be overridden.
 
@@ -59,4 +61,45 @@ $new_cpt->add_taxonomy( 'Genre' );
 $new_cpt->add_taxonomy( 'Genre', array( 'hierarchical' => true ) );
 ```
 
-Note: The class will first check to see if the taxonomy is already registered. In the event that it is, then it will simply associate the taxonomy with the custom post type.
+Note: The class will first check to see if the taxonomy is already registered. In the event that it is, then it will just associate the taxonomy with the custom post type.
+
+### Creating Meta Boxes & Meta Fields
+
+Syntax:
+
+```php
+$new_cpt->add_meta_box(
+    'Meta Box Title',
+    'array(
+        'Meta Field Name' => array(
+            'type' => 'field type',
+            // Other Keys Dependent on 'type'
+            ),
+            'break' => true,
+        ),
+    ),
+);
+```
+
+This method will create both a meta box and the fields within it based on the first argument being the desired title of the Meta Box and then an array defining all of the fields.
+
+The `type` key in the array of fields tells the class what kind of meta field that is to be created. Currently the only valid values are `text`, `select`, `checkbox`, `radio`, `textarea`, `wpeditor`, and `attachment`.
+
+There is also an optional key of `break`, which accepts a boolean value  of `true` to insert a `br` element after the field.
+
+#### Creating a Text Meta Field
+
+A text meta field is created by setting the `type` key in the field array to `text`. This type also will utilize an optional key of `attributes` which is an array of valid HTML attributes for an `input` element such as `maxlength` or `required`. So, using the example of of the `Book Review` custom post type, a meta field of `Book Title` with a maximum length of `64` can be created as follows:
+
+```php
+$new_cpt->add_meta_box(
+    'Book Information',
+    'array(
+        'Meta Field Name' => array(
+            'type' => 'text',
+            'attributes' => array(
+            'maxlength' => 64,
+        ),
+    ),
+);
+```
