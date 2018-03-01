@@ -95,11 +95,35 @@ A text meta field is created by setting the `type` key in the field array to `te
 $new_cpt->add_meta_box(
     'Book Information',
     'array(
-        'Meta Field Name' => array(
+        'Book Title' => array(
             'type' => 'text',
             'attributes' => array(
-            'maxlength' => 64,
+                'maxlength' => 64,
+            ),
         ),
     ),
 );
 ```
+
+#### Creating a Select Meta Field
+
+A drop down list of options can be created by setting the meta field `type` to `select`.
+
+```php
+$new_cpt->add_meta_box(
+    'Book Information',
+    'array(
+        'Genre' => array(
+            'type' => 'text',
+            'select_options' => array(
+                'Literature',
+                'Horror',
+                'Fantasy',
+                'Romance',
+                'Sci-Fi',
+            ),
+        ),
+    ),
+);
+```
+
