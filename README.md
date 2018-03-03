@@ -107,14 +107,14 @@ $new_cpt->add_meta_box(
 
 #### Creating a Select Meta Field
 
-A drop down list of options can be created by setting the meta field `type` to `select`.
+A drop down list of options can be created by setting the meta field `type` to `select`. This requires the use of the key `select_options` which is an array that contains all of the options to be added. To add a `select` meta field for `genre`:
 
 ```php
 $new_cpt->add_meta_box(
     'Book Information',
     'array(
         'Genre' => array(
-            'type' => 'text',
+            'type' => 'select',
             'select_options' => array(
                 'Literature',
                 'Horror',
@@ -127,3 +127,76 @@ $new_cpt->add_meta_box(
 );
 ```
 
+#### Creating a Radio Button Meta Field
+
+A radio group meta field is defined in a very similar way as Select field. Instead of `select_options`, it uses a `radio_options` key to define all the individual radio buttons to create. So, in order to make the genre selection a radio group:
+
+```php
+$new_cpt->add_meta_box(
+    'Book Information',
+    'array(
+        'Genre' => array(
+            'type' => 'radio',
+            'radio_options' => array(
+                'Literature',
+                'Horror',
+                'Fantasy',
+                'Romance',
+                'Sci-Fi',
+            ),
+        ),
+    ),
+);
+```
+
+#### Creating a Text Area Meta Field
+
+The `textarea` meta field also accepts an optional `attributes` key with an array of valid HTML5 attributes:
+
+```php
+$new_cpt->add_meta_box(
+    'Plot Summary',
+    'array(
+        'Summary' => array(
+            'type' => 'textarea',
+            'attributes' => array(
+                'rows' => 5,
+                'cols' => 80,
+            ),
+        ),
+    ),
+);
+```
+
+#### Creating a `wp_editor()` Meta Field
+
+When you need the full WordPress editor for a meta field, this can be created by setting `'type'` to `'wpeditor'`. An optional key of `'wpeditor_options'` can also be used containing an array of [arguments](https://codex.wordpress.org/Function_Reference/wp_editor#Arguments) for `wp_editor()`. The `textarea_name` argument is already defined as the name of the field.
+
+```php
+$new_cpt->add_meta_box(
+    'Plot Summary',
+    'array(
+        'Summary' => array(
+            'type' => 'wpeditor',
+            'wpeditor_options' => array(
+                'textarea_rows' => 5,
+                'media_buttons' => false,
+            ),
+        ),
+    ),
+);
+```
+
+Note: As mentioned above, use of `wp_editor()` makes the plugin incompatible with the upcoming Gutenberg editor so WordPress will fall back to the classic editor.
+
+#### Creating an Attachment Upload Meta Field
+
+```php
+$new_cpt->add_meta_box(
+        	'Book Covers',
+        	array(
+        		'Front Cover' => array(
+        			'type' => 'attachment', 
+        			),
+        		),
+```
