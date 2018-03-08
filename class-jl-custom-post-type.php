@@ -234,10 +234,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 *
 		 * @param string $title Title of meta box
 		 * @param array $fields (optional) Array of fields to add to meta box
+		 * @param string $description (optional) Text description of the meta box displayed to users
 		 * @param string $context (optional) Context on the screen where the meta box should display
 		 * @param string $priority (optional) The priority within the context where the meta box should display
 		 */
-		public function add_meta_box( $title, $fields = array(), $context = 'normal', $priority = 'default' ) {
+		public function add_meta_box( $title, $fields = array(), $description ='', $context = 'normal', $priority =
+		'default' ) {
 
 			if ( ! empty( $title ) ) {
 
@@ -249,16 +251,23 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				$box_title    = self::beautify( $title );
 				$box_context  = $context;
 				$box_priority = $priority;
+				$box_description = $description;
 
 				// Make fields global
 				global $custom_fields;
 				$custom_fields[$title] = $fields;
 
 				add_action( 'add_meta_boxes',
-					function() use( $box_id, $box_title, $post_type_name, $box_context, $box_priority, $fields ) {
+					function() use( $box_id, $box_title, $post_type_name, $box_context, $box_priority, $fields,
+						$box_description ) {
 
 						// Create Callback Arguments Array w/ $fields
 						$callback_args = array( $fields );
+
+						// Check for Description
+						if ( isset( $box_description ) && $box_description != '' ) {
+							$callback_args['description'] = $box_description;
+						}
 
 						// Check for wp_editor() fields and set flag to use classic editor
 						foreach ( $fields as $field ) {
@@ -273,14 +282,26 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							function( $post, $data ) {
 								global $post;
 
+								error_log( '=== $data ===');
+								error_log( print_r( $data, true ) );
+								error_log( '======================');
+
 								// Nonce Field for Validation
 								$nonce_field = $this->post_type_key . '-nonce';
 								wp_nonce_field( JLFITCASE__PLUGIN_FILE, $nonce_field );
 
+								// Display Description if one is set
+								if ( isset( $data['args']['description'] ) ) {
+									echo '<p class="box-desc">' . $data['args']['description'] . '</p>' .
+									     PHP_EOL;
+								}
+
 								// Get Inputs from $data
 								$custom_fields = $data['args'][0];
 
-
+//								error_log( '=== $custom_fields ===');
+//								error_log( print_r( $custom_fields, true ) );
+//								error_log( '======================');
 
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );

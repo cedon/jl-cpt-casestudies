@@ -63,7 +63,8 @@ $fitcase->add_meta_box(
 				'textarea_rows' => 5,
 			)
 		),
-	)
+	),
+	'Basic Client Information taken when client first signs up for services.'
 ); // Client Info
 
 $fitcase->add_meta_box(
