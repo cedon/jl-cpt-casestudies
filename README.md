@@ -78,6 +78,9 @@ $new_cpt->add_meta_box(
             'break' => true,
         ),
     ),
+    'Optional Text Description for Meta Box',
+    'Optional Meta Box Context',
+    'Optional Meta Box Priority'
 );
 ```
 
