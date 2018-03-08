@@ -280,6 +280,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Get Inputs from $data
 								$custom_fields = $data['args'][0];
 
+
+
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
 
@@ -358,8 +360,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 //					error_log( '=== $_POST ===');
 //					error_log( print_r( $_POST, true) );
 //
-					error_log( '=== $_FILES ===');
-					error_log( print_r( $_FILES, true) );
+//					error_log( '=== $_FILES ===');
+//					error_log( print_r( $_FILES, true) );
 
 					// Do not autosave meta box data
 					if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -421,8 +423,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									$id = wp_insert_attachment( $attachment, $attachment_file['file'], $post_id );
 									wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id,
 										$attachment_file['file'] ) );
-									$attachment_meta = wp_get_attachment_metadata( $id );
-									error_log( 'META: ' . print_r( $attachment_meta, true ) );
+//									$attachment_meta = wp_get_attachment_metadata( $id );
+//									error_log( 'META: ' . print_r( $attachment_meta, true ) );
 
 									// Set metadata value to save to database
 									$metadata = $attachment_file['url'];								}
