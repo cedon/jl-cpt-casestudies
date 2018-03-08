@@ -8,6 +8,11 @@ div.postbox.jl-fitcase-meta {
     display: inline-block;
   }
 
+  div > .box-desc {
+    font-style: italic;
+    font-weight: 700;
+  }
+
   input, label {
     margin-bottom: .5em;
     display: inline-block;

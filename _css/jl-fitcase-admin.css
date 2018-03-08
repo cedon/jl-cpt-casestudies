@@ -2,6 +2,9 @@ div.postbox.jl-fitcase-meta h2.hndle.ui-sortable-handle {
   margin-bottom: 1em; }
 div.postbox.jl-fitcase-meta div[class*=jlfitcase-meta] {
   display: inline-block; }
+div.postbox.jl-fitcase-meta div > .box-desc {
+  font-style: italic;
+  font-weight: 700; }
 div.postbox.jl-fitcase-meta input, div.postbox.jl-fitcase-meta label {
   margin-bottom: .5em;
   display: inline-block; }
