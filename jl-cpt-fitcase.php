@@ -26,6 +26,7 @@ register_activation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
 register_deactivation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
 
 $fitcase = new JL_CustomPostType( 'Case Study' );
+$fitcase->set_post_key( 'fitcase' );
 $fitcase->add_taxonomy( 'Fitness Goal', array( 'hierarchical' => true ) );
 
 $fitcase->add_meta_box(
@@ -63,54 +64,29 @@ $fitcase->add_meta_box(
 				'textarea_rows' => 5,
 			)
 		),
-	)
+	),
+	'Basic Client Information taken when client first signs up for services.'
 ); // Client Info
 
 $fitcase->add_meta_box(
-	'Testing Checkboxes',
+	'Client Photos',
 	array(
-		'Checkbox One' => array(
-			'type' => 'checkbox',
-		),
-		'Checkbox Two' => array(
-			'type' => 'checkbox',
-		),
-		'Checkbox Three' => array(
-			'type' => 'checkbox',
-		),
-	)
-);
-
-$fitcase->add_meta_box(
-	'Testing Radio Buttons',
-	array(
-		'Radio One' => array(
-			'type' => 'radio',
-			'radio_options' => array( 'One', 'Two', 'Three', 'Four'),
-		),
-	)
-);
-
-$fitcase->add_meta_box(
-	'Testing Text Areas',
-	array(
-		'Text Area One' => array(
-			'type' => 'textarea',
-			'attributes' => array(
-				'rows' => 5,
-				'cols' => 80,
+		'Before Photo' => array(
+			'type' => 'attachment',
+			'mimes' => array(
+				'image/jpeg',
+				'image/png',
 			),
 		),
-		'Text Area Two' => array(
-			'type' => 'textarea',
-			'attributes' => array(
-				'rows' => 5,
-				'cols' => 80,
-			),
+		'Current Photo' => array(
+				'type' => 'attachment',
+				'mimes' => array(
+					'image/jpeg',
+					'image/png',
+				),
 		),
 	)
-);
-
+); // Client Before/After Photos
 
 // Load Custom Admin Styles
 function jl_fitcase_css() {
@@ -119,5 +95,7 @@ function jl_fitcase_css() {
 		return;
 	}
 	wp_enqueue_style( 'jlfitcase-admin-style', plugins_url( '_css/jl-fitcase-admin.css', __FILE__ ) );
+	wp_enqueue_script( 'jlfitcase-admin-script', plugins_url( '_js/jl-cpt-fitcase-admin.js', __FILE__ ), array(), '1.0',
+		true );
 }
 add_action( 'admin_enqueue_scripts', 'jl_fitcase_css' );

@@ -26,6 +26,17 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		public $post_type_name;
 
 		/**
+		 *
+		 * Optional key used for custom post type. This will be used to preface names, IDs, etc. Will default to a
+		 * eight character truncation of $post_type_name but can be set using the set_post_key() method.
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 * @var string
+		 */
+		public $post_type_key;
+
+		/**
 		 * Arguments for custom post type registration
 		 *
 		 * @since 1.0.0
@@ -57,6 +68,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Set Variables
 			$this->post_type_name      = self::uglify( $name );
+			$this->post_type_key       = substr( preg_replace( "/[^a-z]+/", "", self::uglify( $name ) ), 0, 8 );
 			$this->post_type_args      = $args;
 			$this->post_type_labels    = $labels;
 
@@ -222,10 +234,12 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		 *
 		 * @param string $title Title of meta box
 		 * @param array $fields (optional) Array of fields to add to meta box
+		 * @param string $description (optional) Text description of the meta box displayed to users
 		 * @param string $context (optional) Context on the screen where the meta box should display
 		 * @param string $priority (optional) The priority within the context where the meta box should display
 		 */
-		public function add_meta_box( $title, $fields = array(), $context = 'normal', $priority = 'default' ) {
+		public function add_meta_box( $title, $fields = array(), $description ='', $context = 'normal', $priority =
+		'default' ) {
 
 			if ( ! empty( $title ) ) {
 
@@ -237,16 +251,23 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				$box_title    = self::beautify( $title );
 				$box_context  = $context;
 				$box_priority = $priority;
+				$box_description = $description;
 
 				// Make fields global
 				global $custom_fields;
 				$custom_fields[$title] = $fields;
 
 				add_action( 'add_meta_boxes',
-					function() use( $box_id, $box_title, $post_type_name, $box_context, $box_priority, $fields ) {
+					function() use( $box_id, $box_title, $post_type_name, $box_context, $box_priority, $fields,
+						$box_description ) {
 
 						// Create Callback Arguments Array w/ $fields
 						$callback_args = array( $fields );
+
+						// Check for Description
+						if ( isset( $box_description ) && $box_description != '' ) {
+							$callback_args['description'] = $box_description;
+						}
 
 						// Check for wp_editor() fields and set flag to use classic editor
 						foreach ( $fields as $field ) {
@@ -261,14 +282,32 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							function( $post, $data ) {
 								global $post;
 
+								error_log( '=== $data ===');
+								error_log( print_r( $data, true ) );
+								error_log( '======================');
+
 								// Nonce Field for Validation
-								wp_nonce_field( JLFITCASE__PLUGIN_FILE, 'jl-fitcase-nonce' );
+								$nonce_field = $this->post_type_key . '-nonce';
+								wp_nonce_field( JLFITCASE__PLUGIN_FILE, $nonce_field );
+
+								// Display Description if one is set
+								if ( isset( $data['args']['description'] ) ) {
+									echo '<p class="box-desc">' . $data['args']['description'] . '</p>' .
+									     PHP_EOL;
+								}
 
 								// Get Inputs from $data
 								$custom_fields = $data['args'][0];
 
+//								error_log( '=== $custom_fields ===');
+//								error_log( print_r( $custom_fields, true ) );
+//								error_log( '======================');
+
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
+
+								//error_log( '=== $meta ===' );
+								//error_log( print_r( $meta, true ) );
 
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
@@ -339,14 +378,21 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			add_action( 'save_post',
 				function () use ( $post_type_name ) {
 
+//					error_log( '=== $_POST ===');
+//					error_log( print_r( $_POST, true) );
+//
+//					error_log( '=== $_FILES ===');
+//					error_log( print_r( $_FILES, true) );
+
 					// Do not autosave meta box data
 					if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 						return;
 					}
 
 					// Abort if the nonce field is not set
-					if ( ! isset( $_POST['jl-fitcase-nonce'] ) ||
-					     ! wp_verify_nonce( $_POST['jl-fitcase-nonce'], JLFITCASE__PLUGIN_FILE ) ) {
+					$nonce_field = $this->post_type_key . '-nonce';
+					if ( ! isset( $_POST[$nonce_field] ) ||
+					     ! wp_verify_nonce( $_POST[$nonce_field], JLFITCASE__PLUGIN_FILE ) ) {
 						return;
 					}
 
@@ -364,11 +410,45 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								$field_name = self::uglify( $title ) . '_' . self::uglify( $label );
 
 								// Prevent PHP Warnings for undefined index
-								if ( isset( $_POST['fitcase'][ $field_name ] ) ) {
-									$metadata = $_POST['fitcase'][ $field_name ];
+								if ( isset( $_POST[$this->post_type_key][ $field_name ] ) ) {
+									$metadata = $_POST[$this->post_type_key][ $field_name ];
 								} else {
 									$metadata = null;
 								}
+
+								if ( ! empty( $_FILES[$field_name]['name'] ) ) {
+									//$meta = get_post_custom( $post->ID );
+									//error_log ('=== META ===' . print_r( $meta, true ) );
+									require_once( ABSPATH . 'wp-admin/includes/file.php' );
+									$override['action'] = 'editpost';
+
+									$file_name = $_FILES[$field_name]['name'];
+									$attachment_file = wp_handle_upload( $_FILES[$field_name], $override );
+									$post_id = $post->ID;
+
+									$attachment = array(
+										'post_title'     => $file_name,
+										'post_content'   => '',
+										'post_type'      => 'attachment',
+										'post_parent'    => $post_id,
+										'post_mime_type' => $_FILES[$field_name]['type'],
+										'guid'           => $attachment_file['url'],
+									);
+
+									// Check if file is a JPEG or PNG and require wp-admin/includes/image.php
+									if ( $_FILES[$field_name]['type'] == 'image/jpeg' || $_FILES[$field_name]['type']
+									                                                     == 'image/png' ) {
+										require_once( ABSPATH . 'wp-admin/includes/image.php' );
+									}
+
+									$id = wp_insert_attachment( $attachment, $attachment_file['file'], $post_id );
+									wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id,
+										$attachment_file['file'] ) );
+//									$attachment_meta = wp_get_attachment_metadata( $id );
+//									error_log( 'META: ' . print_r( $attachment_meta, true ) );
+
+									// Set metadata value to save to database
+									$metadata = $attachment_file['url'];								}
 
 								if ( $metadata != null ) {
 									update_post_meta( $post->ID, $field_name, $metadata );
@@ -379,6 +459,19 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				}
 			);
 
+		}
+
+		/** Redefine post_type_key
+		 * Redefines $this->post_type_key with user-selected override
+		 *
+		 * @since 1.0.0.
+		 * @access public
+		 *
+		 * @param $key (string) The key the user wishes to use as an override
+		 */
+		public function set_post_key( $key ) {
+			$newkey = preg_replace( "/[^a-z]+/", "", self::uglify( $key ) );
+			$this->post_type_key = $newkey;
 		}
 
 		/**
@@ -452,18 +545,21 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			$wpeditor_options
 		) {
 
+			// Set key
+			$post_key = $this->post_type_key;
+
 			// Initialize Meta Field
 			$meta_field = '';
 
 			// Check for meta data for value attribute and set to null if not found
-			if ( ! isset( $meta[ $field_id_name ] ) ) {
-				$meta[ $field_id_name ][0] = null;
+			if ( ! isset( $meta[$field_id_name] ) ) {
+				$meta[$field_id_name][0] = null;
 			}
 
 			// Text Fields
 			if ( $field_type == 'text' ) {
-				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' .
-				                $field_id_name . '" value="' . $meta[ $field_id_name ][0] . '" ';
+				$meta_field .= '<input type="' . $field_type . '" name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' .
+				                $field_id_name . '" value="' . $meta[$field_id_name][0] . '" ';
 
 				if ( isset( $attributes ) && ! empty( $attributes ) ) {
 					$meta_field .= self::input_attributes( $attributes );
@@ -474,11 +570,11 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Select Elements
 			if ( $field_type == 'select' ) {
-				$meta_field .= '<select name="fitcase[' . $field_id_name . ']" id="' .
+				$meta_field .= '<select name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' .
 				               $field_id_name . '">';
 
 				foreach ( $select_options as $option ) {
-					$meta_field .= '<option value="' . $option . '" ' . selected( $meta[ $field_id_name ][0],
+					$meta_field .= '<option value="' . $option . '" ' . selected( $meta[$field_id_name][0],
 							$option, false ) . ' >' .
 					                 $option . '</option>';
 				}
@@ -488,20 +584,20 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 			// Check Boxes
 			if ( $field_type == 'checkbox' ) {
-				$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][0], $field_id_name, false ) . ' />';
+				$meta_field .= '<input type="' . $field_type . '" name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $field_id_name . '" ' . checked( $meta[ $field_id_name ][0], $field_id_name, false ) . ' />';
 			}
 
 			// Radio Buttons
 			if ( $field_type == 'radio' ) {
 				foreach ( $radio_options as $radio ) {
-					$meta_field .= '<input type="' . $field_type . '" name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][0], $radio, false ) . ' />';
+					$meta_field .= '<input type="' . $field_type . '" name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' . $field_id_name . '" value="' . $radio . '" ' . checked( $meta[ $field_id_name ][0], $radio, false ) . ' />';
 					$meta_field .= self::add_input_label( $field_id_name, $radio );
 				}
 			}
 
 			// Text Area
 			if ( $field_type == 'textarea' ) {
-				$meta_field .= '<textarea name="fitcase[' . $field_id_name . ']" id="' . $field_id_name . '" ';
+				$meta_field .= '<textarea name="'. "{$post_key}" . '[' . $field_id_name . ']" id="' . $field_id_name . '" ';
 
 				if ( isset( $attributes ) && ! empty( $attributes ) ) {
 					$meta_field .= self::input_attributes( $attributes );
@@ -524,9 +620,36 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					$editor_content = '';
 				}
 
-				$wpeditor_options['textarea_name'] = 'fitcase[' . $field_id_name . ']';
+				$wpeditor_options['textarea_name'] = "{$this->post_type_key}" . '[' . $field_id_name . ']';
 
 				wp_editor( $editor_content, $field_id_name, $wpeditor_options );
+			}
+
+			// File Upload Field
+			if ( $field_type == 'attachment' ) {
+				$meta_field .= '<input type="file" name="' . $field_id_name . '" id="' .
+				               $field_id_name . '" value="' . $meta[$field_id_name][0] . '" size="25">';
+
+				if ( isset( $meta[$field_id_name][0] ) ) {
+					$attachment_id = attachment_url_to_postid( $meta[$field_id_name][0] );
+					$upload_meta = wp_get_attachment_metadata( $attachment_id );
+
+					if ( isset( $upload_meta['image_meta'] ) ) {
+						$img_max_width = 300;
+						if ( $upload_meta['width'] > $img_max_width ) {
+							$img_ratio = $upload_meta['width'] / $img_max_width;
+							$img_width = $img_max_width;
+							$img_height = $upload_meta['height'] / $img_ratio;
+						} else {
+							$upload_meta['width'];
+							$img_height = $upload_meta['height'];
+						}
+
+
+						$meta_field .= '<br /> <img src="' . $meta[$field_id_name][0] . '" width="' . $img_width . '" height="' . $img_height .
+						     '">';
+					}
+				}
 			}
 
 			// Return Completed Meta Field
