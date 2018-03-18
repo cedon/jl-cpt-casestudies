@@ -5,3 +5,16 @@ function add_meta_box_class( $classes ) {
 	array_push( $classes, 'jl-fitcase-meta');
 	return $classes;
 }
+
+function get_fitcase_options() {
+	$all_options = wp_load_alloptions();
+	$fitcase_options = array();
+
+	foreach ( $all_options as $name => $value ) {
+		if ( stristr( $name, JLFITCASE__NAMESPACE ) ) {
+			$fitcase_options[ $name ] = $value;
+		}
+	}
+
+	error_log( print_r( $fitcase_options, true ) );
+}

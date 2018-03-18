@@ -14,6 +14,7 @@ define( 'JLFITCASE__VERSION', '1.0' );
 define( 'JLFITCASE__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_FILE', __FILE__ );
+define( 'JLFITCASE__NAMESPACE', 'fitcase' );
 
 require_once ( JLFITCASE__PLUGIN_DIR . '_inc/functions.php');
 require_once ( JLFITCASE__PLUGIN_DIR . 'class-jl-custom-post-type.php' );
