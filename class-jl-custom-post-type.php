@@ -669,6 +669,18 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		}
 
 		/**
+		 * Returns the beautified Post Type of the object for use elsewhere
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 *
+		 * @return string The value of $this->post_type_name
+		 */
+		function getPostType() {
+			return self::beautify( $this->post_type_name );
+		}
+
+		/**
 		 * Changes a string like 'my_string' to 'My String' for display purposes
 		 *
 		 * @since 1.0.0
