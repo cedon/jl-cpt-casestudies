@@ -6,6 +6,12 @@ function add_meta_box_class( $classes ) {
 	return $classes;
 }
 
+// Disables the Image Sizes for Uploading Images to prevent multiple versions
+function fitcase_remove_image_sizes( $sizes, $metadata ) {
+	return [];
+}
+
+// Creates an array of all admin options that contain the string stored as JLFITCASE__NAMESPACE
 function get_fitcase_options() {
 	$all_options = wp_load_alloptions();
 	$fitcase_options = array();

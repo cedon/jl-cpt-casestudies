@@ -282,10 +282,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							function( $post, $data ) {
 								global $post;
 
-								error_log( '=== $data ===');
-								error_log( print_r( $data, true ) );
-								error_log( '======================');
-
 								// Nonce Field for Validation
 								$nonce_field = $this->post_type_key . '-nonce';
 								wp_nonce_field( JLFITCASE__PLUGIN_FILE, $nonce_field );
@@ -299,15 +295,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								// Get Inputs from $data
 								$custom_fields = $data['args'][0];
 
-//								error_log( '=== $custom_fields ===');
-//								error_log( print_r( $custom_fields, true ) );
-//								error_log( '======================');
-
 								// Get Saved Values
 								$meta = get_post_custom( $post->ID );
-
-								//error_log( '=== $meta ===' );
-								//error_log( print_r( $meta, true ) );
 
 								// Check Array and Loop
 								if ( ! empty( $custom_fields ) ) {
@@ -378,12 +367,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			add_action( 'save_post',
 				function () use ( $post_type_name ) {
 
-//					error_log( '=== $_POST ===');
-//					error_log( print_r( $_POST, true) );
-//
-//					error_log( '=== $_FILES ===');
-//					error_log( print_r( $_FILES, true) );
-
 					// Do not autosave meta box data
 					if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 						return;
@@ -417,8 +400,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 								}
 
 								if ( ! empty( $_FILES[$field_name]['name'] ) ) {
-									//$meta = get_post_custom( $post->ID );
-									//error_log ('=== META ===' . print_r( $meta, true ) );
 									require_once( ABSPATH . 'wp-admin/includes/file.php' );
 									$override['action'] = 'editpost';
 
@@ -439,16 +420,27 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									if ( $_FILES[$field_name]['type'] == 'image/jpeg' || $_FILES[$field_name]['type']
 									                                                     == 'image/png' ) {
 										require_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+										// Temporarily Disable All Defined Image Sizes
+										add_filter( 'intermediate_image_sizes_advanced', 'fitcase_remove_image_sizes', 10, 2 );
+										error_log( 'Image Sizes at Upload: ' . PHP_EOL );
+										error_log( print_r( get_intermediate_image_sizes(), true ) );
 									}
 
 									$id = wp_insert_attachment( $attachment, $attachment_file['file'], $post_id );
 									wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id,
 										$attachment_file['file'] ) );
-//									$attachment_meta = wp_get_attachment_metadata( $id );
-//									error_log( 'META: ' . print_r( $attachment_meta, true ) );
 
 									// Set metadata value to save to database
-									$metadata = $attachment_file['url'];								}
+									$metadata = $attachment_file['url'];
+
+									if ( $_FILES[$field_name]['type'] == 'image/jpeg' || $_FILES[$field_name]['type']
+									                                                     == 'image/png' ) {
+										remove_filter( 'intermediate_image_sizes_advanced', 'fitcase_remove_image_sizes' );
+										error_log( 'Image Sizes after Upload: ' . PHP_EOL );
+										error_log( print_r( get_intermediate_image_sizes(), true ) );
+									}
+								}
 
 								if ( $metadata != null ) {
 									update_post_meta( $post->ID, $field_name, $metadata );
