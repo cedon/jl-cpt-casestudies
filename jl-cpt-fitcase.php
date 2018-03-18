@@ -12,8 +12,11 @@ License: GPLv2 or later
 
 define( 'JLFITCASE__VERSION', '1.0' );
 define( 'JLFITCASE__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'JLFITCASE__PLUGIN_BASEURL', plugin_dir_url( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_FILE', __FILE__ );
+define( 'JLFITCASE__UPLOADSDIR', JLFITCASE__PLUGIN_DIR . 'uploads' );
+define( 'JLFITCASE__UPLOADSURL', JLFITCASE__PLUGIN_BASEURL . 'uploads' );
 define( 'JLFITCASE__NAMESPACE', 'fitcase' );
 
 require_once ( JLFITCASE__PLUGIN_DIR . '_inc/functions.php');
@@ -23,6 +26,7 @@ function jl_fitcase_flush_rewrite() {
 	flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
+register_activation_hook( __FILE__, 'fitcase_init_photo_root_dir' );
 register_deactivation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
 
 $fitcase = new JL_CustomPostType( 'Case Study' );

@@ -421,10 +421,9 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									                                                     == 'image/png' ) {
 										require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
-										// Temporarily Disable All Defined Image Sizes
+										// Temporarily Disable All Defined Image Sizes & Change Upload Directory
 										add_filter( 'intermediate_image_sizes_advanced', 'fitcase_remove_image_sizes', 10, 2 );
-										error_log( 'Image Sizes at Upload: ' . PHP_EOL );
-										error_log( print_r( get_intermediate_image_sizes(), true ) );
+
 									}
 
 									$id = wp_insert_attachment( $attachment, $attachment_file['file'], $post_id );
@@ -437,8 +436,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									if ( $_FILES[$field_name]['type'] == 'image/jpeg' || $_FILES[$field_name]['type']
 									                                                     == 'image/png' ) {
 										remove_filter( 'intermediate_image_sizes_advanced', 'fitcase_remove_image_sizes' );
-										error_log( 'Image Sizes after Upload: ' . PHP_EOL );
-										error_log( print_r( get_intermediate_image_sizes(), true ) );
 									}
 								}
 
@@ -625,6 +622,9 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				if ( isset( $meta[$field_id_name][0] ) ) {
 					$attachment_id = attachment_url_to_postid( $meta[$field_id_name][0] );
 					$upload_meta = wp_get_attachment_metadata( $attachment_id );
+
+					error_log( $attachment_id );
+					error_log( printr_r( $upload_meta, true) );
 
 					if ( isset( $upload_meta['image_meta'] ) ) {
 						$img_max_width = 300;
