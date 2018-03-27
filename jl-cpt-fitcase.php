@@ -15,18 +15,16 @@ define( 'JLFITCASE__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_BASEURL', plugin_dir_url( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'JLFITCASE__PLUGIN_FILE', __FILE__ );
-define( 'JLFITCASE__UPLOADSDIR', JLFITCASE__PLUGIN_DIR . 'uploads' );
-define( 'JLFITCASE__UPLOADSURL', JLFITCASE__PLUGIN_BASEURL . 'uploads' );
 define( 'JLFITCASE__NAMESPACE', 'fitcase' );
 
-require_once ( JLFITCASE__PLUGIN_DIR . '_inc/functions.php');
 require_once ( JLFITCASE__PLUGIN_DIR . 'class-jl-custom-post-type.php' );
 
 function jl_fitcase_flush_rewrite() {
 	flush_rewrite_rules();
 }
+
+// Activation / Deactivation Hooks
 register_activation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
-register_activation_hook( __FILE__, 'fitcase_init_photo_root_dir' );
 register_deactivation_hook( __FILE__, 'jl_fitcase_flush_rewrite' );
 
 $fitcase = new JL_CustomPostType( 'Case Study' );
@@ -92,6 +90,9 @@ $fitcase->add_meta_box(
 	)
 ); // Client Before/After Photos
 
+global $upload_array;
+$upload_array = $fitcase->getPostUploadLoc();
+
 // Load Custom Admin Styles
 function jl_fitcase_css() {
 	global $post_type;
@@ -103,6 +104,9 @@ function jl_fitcase_css() {
 		true );
 }
 add_action( 'admin_enqueue_scripts', 'jl_fitcase_css' );
+
+// Load Functions
+require_once ( JLFITCASE__PLUGIN_DIR . '_inc/functions.php');
 
 // Load Admin Options
 require_once ( JLFITCASE__PLUGIN_DIR . '_inc/options.php' );

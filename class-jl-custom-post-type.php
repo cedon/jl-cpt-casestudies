@@ -55,6 +55,15 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 		public $post_type_labels;
 
 		/**
+		 * Array of upload locations for attachments
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 * @var array
+		 */
+		public $post_upload_loc;
+
+		/**
 		 * Constructor
 		 *
 		 * @since 1.0.0
@@ -77,8 +86,18 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 				add_action( 'init', array( &$this, 'register_post_type' ) );
 			}
 
+			// Set upload locations
+			$this->set_post_upload_loc();
+
+			// Create custom upload location
+			if ( ! wp_mkdir_p( $this->post_upload_loc['path'] ) ) {
+				wp_mkdir_p( $this->post_upload_loc['path'] );
+			}
+			chmod( $this->post_upload_loc['path'], 0755 );
+
 			// Listen for Save Post Hook
 			$this->save();
+
 		}
 
 		/**
@@ -407,6 +426,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									$attachment_file = wp_handle_upload( $_FILES[$field_name], $override );
 									$post_id = $post->ID;
 
+
 									$attachment = array(
 										'post_title'     => $file_name,
 										'post_content'   => '',
@@ -415,6 +435,7 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 										'post_mime_type' => $_FILES[$field_name]['type'],
 										'guid'           => $attachment_file['url'],
 									);
+
 
 									// Check if file is a JPEG or PNG and require wp-admin/includes/image.php
 									if ( $_FILES[$field_name]['type'] == 'image/jpeg' || $_FILES[$field_name]['type']
@@ -427,6 +448,8 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 									}
 
 									$id = wp_insert_attachment( $attachment, $attachment_file['file'], $post_id );
+
+
 									wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id,
 										$attachment_file['file'] ) );
 
@@ -450,17 +473,34 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 		}
 
-		/** Redefine post_type_key
-		 * Redefines $this->post_type_key with user-selected override
-		 *
-		 * @since 1.0.0.
-		 * @access public
-		 *
-		 * @param $key (string) The key the user wishes to use as an override
-		 */
+		/**
+	 * Redefines $this->post_type_key with user-selected override
+	 *
+	 * @since 1.0.0.
+	 * @access public
+	 *
+	 * @param $key (string) The key the user wishes to use as an override
+	 */
 		public function set_post_key( $key ) {
 			$newkey = preg_replace( "/[^a-z]+/", "", self::uglify( $key ) );
 			$this->post_type_key = $newkey;
+		}
+
+		/**
+		 * Sets the value of $this->post_type_upload_loc with a custom folder located in ./wp-content/uploads
+		 *
+		 * @since 1.0.0.
+		 * @access public
+		 */
+		public function set_post_upload_loc() {
+			$upload_subdir = '/' . self::uglify( $this->post_type_name );
+			$upload_array = wp_upload_dir();
+
+			$upload_array['subdir'] = $upload_subdir;
+			$upload_array['path'] = $upload_array['basedir'] . $upload_array['subdir'];
+			$upload_array['url'] = $upload_array['baseurl'] . $upload_array['subdir'];
+
+			$this->post_upload_loc = $upload_array;
 		}
 
 		/**
@@ -623,8 +663,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 					$attachment_id = attachment_url_to_postid( $meta[$field_id_name][0] );
 					$upload_meta = wp_get_attachment_metadata( $attachment_id );
 
-					error_log( $attachment_id );
-					error_log( printr_r( $upload_meta, true) );
 
 					if ( isset( $upload_meta['image_meta'] ) ) {
 						$img_max_width = 300;
@@ -636,7 +674,6 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 							$upload_meta['width'];
 							$img_height = $upload_meta['height'];
 						}
-
 
 						$meta_field .= '<br /> <img src="' . $meta[$field_id_name][0] . '" width="' . $img_width . '" height="' . $img_height .
 						     '">';
@@ -660,16 +697,28 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			return $this->post_type_name;
 		}
 
+	/**
+	 * Returns the beautified Post Type of the object for use elsewhere
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return string The value of $this->post_type_name
+	 */
+		function getPostType() {
+			return self::beautify( $this->post_type_name );
+		}
+
 		/**
-		 * Returns the beautified Post Type of the object for use elsewhere
+		 * Returns the upload location array
 		 *
 		 * @since 1.0.0
 		 * @access public
 		 *
-		 * @return string The value of $this->post_type_name
+		 * @return array The value of $this->post_upload_loc
 		 */
-		function getPostType() {
-			return self::beautify( $this->post_type_name );
+		function getPostUploadLoc() {
+			return $this->post_upload_loc;
 		}
 
 		/**
