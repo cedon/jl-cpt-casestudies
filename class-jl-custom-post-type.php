@@ -665,14 +665,13 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 
 
 					if ( isset( $upload_meta['image_meta'] ) ) {
+						$img_width = $upload_meta['width'];
+						$img_height = $upload_meta['height'];
 						$img_max_width = 300;
-						if ( $upload_meta['width'] > $img_max_width ) {
+						if ( $img_width > $img_max_width ) {
 							$img_ratio = $upload_meta['width'] / $img_max_width;
 							$img_width = $img_max_width;
 							$img_height = $upload_meta['height'] / $img_ratio;
-						} else {
-							$upload_meta['width'];
-							$img_height = $upload_meta['height'];
 						}
 
 						$meta_field .= '<br /> <img src="' . $meta[$field_id_name][0] . '" width="' . $img_width . '" height="' . $img_height .
@@ -697,16 +696,28 @@ if ( ! class_exists( 'JL_CustomPostType' ) ) {
 			return $this->post_type_name;
 		}
 
-	/**
-	 * Returns the beautified Post Type of the object for use elsewhere
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @return string The value of $this->post_type_name
-	 */
+		/**
+		 * Returns the beautified Post Type of the object for use elsewhere
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 *
+		 * @return string The value of $this->post_type_name
+		 */
 		function getPostType() {
 			return self::beautify( $this->post_type_name );
+		}
+
+		/**
+		 * Returns the value of the object's post_type_key property
+		 *
+		 * @since 1.0.0
+		 * @access public
+		 *
+		 * @return string The value of $this->post_type_key
+		 */
+		function get_post_key() {
+			return $this->post_type_key;
 		}
 
 		/**

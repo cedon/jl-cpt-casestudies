@@ -11,6 +11,8 @@ function fitcase_client_photo_dir( $args ) {
 
 	if ( isset( $_REQUEST['post_ID'] ) ) {
 
+		//error_log( print_r( $_REQUEST, true ) );
+
 		$id        = $_REQUEST['post_ID'];
 		$parent_id = get_post( $id )->post_parent;
 
@@ -41,6 +43,45 @@ function fitcase_remove_image_sizes( $sizes, $metadata ) {
 //	return $sizes;
 	return [];
 }
+
+function fitcase_set_upload_metadata( $attachment_id ) {
+
+	$id        = $attachment_id;
+	$parent_id = get_post( $id )->post_parent;
+
+	error_log ('$id is ' . $id );
+	error_log('$parent_id is ' . $parent_id );
+
+	$url = wp_get_attachment_url( $id );
+	error_log( 'The attatched file URL is ' . $url );
+	$post_meta = get_post_meta( $parent_id );
+	error_log( print_r( $post_meta, true ) );
+
+	$new_meta = array_filter( $post_meta, function ( $var ) use ( $url ) {
+		return $var == $url;
+	} );
+	error_log( print_r( $new_meta, true ) );
+
+	$key = array_search( $url, $post_meta );
+	error_log(print_r( $key, true));
+
+	global $fitcase;
+	$cpt_key = $fitcase->get_post_key();
+
+	error_log( 'The Post Key is ' . $cpt_key );
+
+	if ( "case_study" == get_post_type( $parent_id ) ) {
+
+		$post_custom = get_post_custom( $parent_id );
+		$image_meta = array();
+
+		if ( isset( $post_custom[$cpt_key] ) ) {
+
+		}
+
+	}
+}
+add_action( 'add_attachment', 'fitcase_set_upload_metadata' );
 
 // Creates an array of all admin options that contain the string stored as JLFITCASE__NAMESPACE
 function get_fitcase_options() {
